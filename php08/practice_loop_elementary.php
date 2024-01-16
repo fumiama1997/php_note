@@ -11,7 +11,7 @@ echo($_POST['number']);
 
 if (intval($_POST['number']) === 10) {
     echo($_POST['number']);
-    for ($i = 1; $i <= 10; $i = $i + 1) {
+    for ($i = 0; $i < 10; $i = $i + 1) {
           $array_rnd = array_rand($direction, 1);
         if ($array_rnd == '1') {
             $table_count = $table_count + 1;
@@ -20,7 +20,7 @@ if (intval($_POST['number']) === 10) {
         }
     }
 } elseif (intval($_POST['number']) === 100) {
-    for ($i = 1; $i <= 100; $i = $i + 1) {
+    for ($i = 0; $i < 100; $i = $i + 1) {
         $array_rnd = array_rand($direction, 1);
         if ($array_rnd == '1') {
             $table_count = $table_count + 1;
@@ -29,7 +29,7 @@ if (intval($_POST['number']) === 10) {
         }
     }
 } elseif (intval($_POST['number']) === 1000) {
-    for ($i = 1; $i <= 1000; $i = $i + 1) {
+    for ($i = 0; $i < 1000; $i = $i + 1) {
         $array_rnd = array_rand($direction, 1);
         if ($array_rnd == '1') {
             $table_count = $table_count + 1;
