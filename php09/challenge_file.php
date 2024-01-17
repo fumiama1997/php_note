@@ -1,7 +1,5 @@
-<!-- テキストボックスの値をPOSTで送信し、日時とユーザが入力した値を1行ずつファイル(challenge_log.txt)に保存し、ページ下部にファイル内容を1行ずつ表示するプログラムを作成してください。 -->
-<?php
 
-//   postされた情報を利用して日時とユーザが入力した値を1行ずつファイル(challenge_log.txt)に保存。
+<?php
 $filename = './challenge_log.txt';
 $comment = '';
 
@@ -12,7 +10,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (($fp = fopen($filename, 'a')) !== FALSE) {
-        //$fpに$filenameが入っている。
         if (fwrite($fp, $date . $comment . "\n") === FALSE) {
             print 'ファイル書き込み失敗:  ' . $filename;
         }
