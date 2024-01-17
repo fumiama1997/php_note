@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $comment = $_POST['comment'];
     }
 
-    if (($fp = fopen($filename, 'a')) !== FALSE) {
+    if (($fp = fopen($filename, 'w')) !== FALSE) {
         if (fwrite($fp, $comment) === FALSE) {
             print 'ファイル書き込み失敗:  ' . $filename;
         }
