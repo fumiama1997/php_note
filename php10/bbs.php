@@ -1,48 +1,40 @@
-<!-- 以下の要件を満たすように作成してください。
-
-利用者が名前とコメントを入力し、発言できる。
-利用者の過去の発言内容をテキストファイルで管理する。
-全ての利用者の過去の発言内容を一覧で表示する。一覧には「名前」「コメント」「発言日時」の3つを1行ずつ表示する。
-利用者の名前は最大20文字以内まで発言できる。もし20文字より多くの文字を入力して発言した場合はエラーメッセージを表示し、発言できないようにする。
-利用者のコメントは最大100文字以内まで発言できる。もし100文字より多くの文字を入力して発言した場合はエラーメッセージを表示し、発言できないようにする。
-利用者の名前とコメントは必ず文字が入力される。もし名前あるいはコメントが未入力で発言した場合はエラーメッセージを表示し、発言できないようにする。
-（ソースコード）比較演算子は、「===」や「!==」を利用すること -->
-
-
 <?php
 $filename = './challenge_log.txt';
 $comment = '';
 $name = '';
 $nameLimit = '20';
 $commentLimit = '100';
+$error = [];
+$data = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    if (('' == ($_POST['name'])) === FALSE) {
-        if (('' == ($_POST['comment'])) === FALSE) {
-
-            $name = $_POST['name'];
-            $comment = $_POST['comment'];
-            $date = date('Y-m-d H:i');
-        } else {
-            print "名前あるいはコメントが未入力です。";
-        }
+    // 名前の入力チェック、20文字以内かをチェック
+    if ($_POST['name'] === '') {
+        $error['name'] = '名前を入力してください';
+    } else if (mb_strlen($_POST['name']) > 20) {
+        $error['name'] = '名前は20文字以内で入力してください';
     }
-
-    if (($fp = fopen($filename, 'a')) !== FALSE) {
-        $nameLength = strlen($name);
-        $commentLength = strlen($comment);
-
-        if ($nameLimit <= $nameLength || $commentLimit <= $commentLength) {
-            print "名前は20文字以内、コメントは100字以内で入力ください。";
-        } else {
-            fwrite($fp, $name . ":" . $comment . "  " . $date . "\n");
+    // ひとことの入力チェック、100文字以内かをチェック
+    if ($_POST['comment'] === '') {
+        $error['comment'] = 'ひとことを入力してください';
+    } else if (mb_strlen($_POST['comment']) > 100) {
+        $error['comment'] = 'ひとことは100文字以内で入力してください';
+    }
+    // 正常処理
+    if (empty($error)) {
+        // 日付を取得
+        $date = date('Y-m-d H:i:s');
+        // 書き込むデータを作成
+        $file_write_text = $_POST['name'] . "\t" . $_POST['comment'] . "\t" . $date . "\n";
+        // ファイルへの書き込み
+        if (($fp = fopen($filename, 'a')) !== FALSE) {
+            if (fwrite($fp, $file_write_text) === FALSE) {
+                print 'ファイル書き込み失敗:  ' . $filename;
+            }
+            fclose($fp);
         }
-        fclose($fp);
     }
 }
-
-$data = [];
 
 if (is_readable($filename) === TRUE) {
     if (($fp = fopen($filename, 'r')) !== FALSE) {
@@ -70,8 +62,15 @@ if (is_readable($filename) === TRUE) {
     <form method="POST">
         <p>名前: <input type="text" name="name"> ひとこと: <input type="text" name="comment"> <input type="submit" value="送信"></p>
     </form>
-    <?php foreach ($data as $value) {
-        print $value . '<br>';
+
+
+    <?php foreach ($error as $value) { ?>
+        <p><?php print $value; ?></p>
+    <?php } ?>
+
+
+    <?php foreach ($data as $element) {
+        print $element . '<br>';
     } ?>
 
 
