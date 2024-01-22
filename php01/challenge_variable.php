@@ -7,11 +7,11 @@ $sp = 50;
 
 print '現在hpは';
 print $hp;
-print 'です。';
+print 'です。<br>';
 
 print '現在はmpは';
 print $mp ;
-print 'です。';
+print 'です。<br>';
 
 print '現在はspは';
 print $sp ;
