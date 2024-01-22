@@ -24,13 +24,13 @@ $data = '1';
     <?php
     for ($i = 1; $i <= 100; $i = $i + 1) {
     if($i % 3 === 0 && $i % 5 === 0){
-       print 'FizzBuzz'."\n" ;
+       print 'FizzBuzz'.'<br>' ;
     } else if($i % 3 === 0) {
-       print 'Fizz'."\n";
+       print 'Fizz'.'<br>';
     } elseif($i % 5 === 0) {
-       print 'Buzz'."\n";
+       print 'Buzz'.'<br>';
     } else {
-       print $i ."\n" ;
+       print $i .'<br>' ;
     }
    }
     ?>

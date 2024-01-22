@@ -7,10 +7,8 @@ $direction = array('1', '2');
 $table_count = '0';
 $inside_count = '0';
 
-echo($_POST['number']);
-
 if (intval($_POST['number']) === 10) {
-    echo($_POST['number']);
+    
     for ($i = 0; $i < 10; $i = $i + 1) {
           $array_rnd = array_rand($direction, 1);
         if ($array_rnd == '1') {
