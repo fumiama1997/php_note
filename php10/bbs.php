@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 名前の入力チェック、20文字以内かをチェック
     if ($_POST['name'] === '') {
         $error['name'] = '名前を入力してください';
-    } else if (mb_strlen($_POST['name']) > 20) {
+    } else if (strlen($_POST['name']) > 20) {
         $error['name'] = '名前は20文字以内で入力してください';
     }
     // ひとことの入力チェック、100文字以内かをチェック

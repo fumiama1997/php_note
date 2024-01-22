@@ -6,7 +6,7 @@
    $fruit_array['price'] = '500';
    $fruit_array['stock'] = '3';
 
-   print $fruit_array['name'];
+   print $fruit_array['price'];
 
 
 

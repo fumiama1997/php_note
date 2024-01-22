@@ -12,8 +12,7 @@
 <body>
     <h1>名前を入力してください</h1>
     <form method="POST" action="practice_global_receive_elementary.php">
-
-        <label>名前: <input type="text" name="my_name" id="my_name" value=""></label>
+        <label>名前: <input type="text" name="my_name"></label>
         <input type="submit" value="送信">
     </form>
 </body>

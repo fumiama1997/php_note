@@ -1,3 +1,32 @@
+<?php
+
+$my_name = '';
+$gender = '';
+$mail = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // 名前の入力チェック
+    if ($_POST['my_name'] === '') {
+        print '名前を入力してください';
+    } else {
+        print 'ここに入力したお名前を表示:'  . htmlspecialchars($_POST['my_name'], ENT_QUOTES, 'UTF-8');
+    }
+
+    //性別チェック
+    if ($_POST['gender'] === TRUE) {
+        print 'ここに選択した性別を表示:'  . htmlspecialchars($_POST['gender'], ENT_QUOTES, 'UTF-8');
+    }
+
+    //メール必要有無
+    if ($_POST['mail'] === '') {
+        print 'メールは受け取りません';
+    } else {
+        print 'お知らせメールを送ります';
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -9,8 +38,8 @@
 
 <body>
     <h1>課題</h1>
-    <form method="POST" action="super_global_receive.php">
-        <p>お名前:<input id="my_name" type="text" name="my_name" value=""></p>
+    <form method="POST">
+        <p>お名前:<input type="text" name="my_name"></p>
 
         <input type="radio" name="gender" value="man">男
         <input type="radio" name="gender" value="woman">女 <br>
