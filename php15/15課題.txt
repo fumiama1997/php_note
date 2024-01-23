@@ -1,4 +1,5 @@
 15 課題
+INSERT INTO user_table(user_name,mail_address,status) VALUES('一郎','hoge@example.com',0);
 
 INSERT INTO user_table(user_name,mail_address,status) VALUES('まる','fuga@example.com',1);
 
