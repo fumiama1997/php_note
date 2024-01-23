@@ -1,0 +1,12 @@
+13-5 課題
+
+
+(2)
+SELECT character_id,character_name FROM character_table WHERE pref LIKE '%県';
+
+(3)
+
+SELECT emp_id,age FROM emp_table WHERE job = clerk
+
+(4)
+SELECT emp_id,emp_name FROM emp_table WHERE job = 'analyst'OR age BETWEEN 20 and 25;
