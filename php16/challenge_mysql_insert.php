@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         <!-- 追加ボタンを押す前のデータベースの情報を表示したい。 -->
-      
+
 
         <!-- エラーが出ていた場合 -->
         <?php foreach ($error as $value) { ?>
