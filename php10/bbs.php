@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else if (mb_strlen($_POST['comment']) > 100) {
         $error['comment'] = 'ひとことは100文字以内で入力してください';
     }
+
     // 正常処理
     if (empty($error)) {
         // 日付を取得
@@ -29,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // ファイルへの書き込み
         if (($fp = fopen($filename, 'a')) !== FALSE) {
             if (fwrite($fp, $file_write_text) === FALSE) {
-                print 'ファイル書き込み失敗:  ' . $filename;
+                $error['filename'] = 'ファイル書き込み失敗:  ' . $filename;
             }
             fclose($fp);
         }

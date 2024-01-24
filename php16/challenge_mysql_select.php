@@ -6,7 +6,6 @@
 
 $emp_data = [];
 $job = '';
-print_r($_POST);
 
 if (isset($_POST['job']) === TRUE) {
 
@@ -22,7 +21,6 @@ if (isset($_POST['job']) === TRUE) {
         mysqli_set_charset($link, 'utf8');
     }
     if ($job === 'all') {
-        echo "test";
         $query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
     } elseif ($job === 'manager') {
         $query = 'SELECT emp_id,emp_name,job,age FROM emp_table WHERE job = "manager"';
@@ -72,7 +70,7 @@ if (isset($_POST['job']) === TRUE) {
     <h1>表示する職種を選択してください。</h1>
 
 
-    <form method="POST" action="./challenge_mysql_select.php">
+    <form method="POST">
         <select name="job">
             <option value="all">全員</option>
             <option value="manager">マネージャー</option>
@@ -88,8 +86,7 @@ if (isset($_POST['job']) === TRUE) {
             <th>職種</th>
             <th>年齢</th>
         </tr>
-        <? echo $result; ?>
-        <? echo $emp_data; ?>
+
         <?php
         foreach ($emp_data as $value) {
         ?>
