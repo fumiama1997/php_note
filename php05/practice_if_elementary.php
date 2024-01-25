@@ -3,20 +3,17 @@
 
 
 
-$rand1 = mt_rand(0,2);
-$rand2 = mt_rand(0,2);
+$rand1 = mt_rand(0, 2);
+$rand2 = mt_rand(0, 2);
 
 print 'rand1: ' . $rand1 . '<br>';
 print 'rand2: ' . $rand2 . '<br>';
- 
 
-if ($rand1 == $rand2){
+
+if ($rand1 === $rand2) {
     print '２つは同じ値です。';
-} else if($rand1 > $rand2){
+} else if ($rand1 > $rand2) {
     print 'rand1の方が大きい値です。';
 } else {
     print 'rand2の方が大きい値です。';
 }
-
-
-?>

@@ -28,8 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($error)) {
-
-        $query =  "INSERT INTO goods_table (goods_name, price) VALUES ('$name','$price')";
+        //ここの書き方が分からない
+        $query =  'INSERT INTO goods_table (goods_name, price) VALUES ("'.$name.'",'.$price.')';
 
         //追加 クエリを実行します  
         $result = mysqli_query($link, $query);

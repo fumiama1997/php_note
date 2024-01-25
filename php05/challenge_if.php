@@ -12,7 +12,7 @@ $rand = mt_rand(1, 6);
     <title>サイコロ</title>
     <style type="test/css">
         .em_red {
-            color: #FF0000;
+    color: #FF0000;
         }
     </style>
 </head>

@@ -13,16 +13,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     //性別チェック
-    if ($_POST['gender'] === TRUE) {
+    if (isset($_POST['gender'])) {
         print 'ここに選択した性別を表示:'  . htmlspecialchars($_POST['gender'], ENT_QUOTES, 'UTF-8');
     }
 
     //メール必要有無
-    if ($_POST['mail'] === '') {
-        print 'メールは受け取りません';
-    } else {
+    if (isset($_POST['mail'])) {
         print 'お知らせメールを送ります';
-    }
+    } 
 }
 ?>
 
