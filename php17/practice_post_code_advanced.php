@@ -62,8 +62,65 @@ $areas = [
 ];
 $post_code = '';
 $regexp_post_code =  '/[0-9]{7}/';
+$post_data = [];
+$error = [];
+$post_code_data = [];
+$regexp_prefecture =  '/.*?[都道府県]/';
+$regexp_city = '/.*?[市町村]/';
+
 
 var_dump($_POST);
+
+// 都道府県・市区町村から住所が検索できる仕様。
+// 都道府県・市区町村のPOSTが飛んできているかの判断
+if (isset($_POST['prefecture']) && isset($_POST['city'])) {
+
+    $prefecture = $_POST['prefecture'];
+    $city = $_POST['city'];
+    $host = 'localhost'; // データベースのホスト名又はIPアドレス
+    $username = 'root';  // MySQLのユーザ名
+    $passwd   = 'narait';    // MySQLのパスワード
+    $dbname   = 'post';    // データベース名
+    $link = mysqli_connect($host, $username, $passwd, $dbname);
+
+    // 接続成功した場合
+    if ($link) {
+
+        // 文字化け防止
+        mysqli_set_charset($link, 'utf8');
+    }
+    if ($prefecture === '') {
+        $error[] = '都道府県名を入力してください<br>';
+    } else if (preg_match($regexp_prefecture, $prefecture, $macths) === 0) {
+        $error[] = '都道府県名を正しく入力ください';
+    }
+
+    if ($city === '') {
+        $error[] = '市町村名を入力してください';
+    } else if (preg_match($regexp_city, $city, $macths) === 0) {
+        $error[] = '市町村名を正しく入力ください';
+    }
+
+    if (empty($error)) {
+        $query = 'SELECT post_code FROM zip_data_split_3 WHERE prefecture = "' .$prefecture . '" AND city = "' .$city . '"  ';
+        echo $query;
+
+        $result = mysqli_query($link, $query);
+        while ($row = mysqli_fetch_array($result)) {
+            $post_code_data[] = $row;
+        }
+        //結果セットを開放します
+        mysqli_free_result($result);
+        //接続を閉じます
+        mysqli_close($link);
+        //接続に失敗した場合
+    }
+}
+
+
+
+
+//郵便番号から都道府県・市町村を選択する仕様
 if (isset($_POST['post_code'])) {
     $post_code = $_POST['post_code'];
     $host = 'localhost'; // データベースのホスト名又はIPアドレス
@@ -84,9 +141,11 @@ if (isset($_POST['post_code'])) {
         $error[] = '7桁の数値のみ入力してください';
     }
     if (empty($error)) {
-        $query = 'SELECT COL5,COL6,COL7 FROM zip_data_split_3';
+        $query = 'SELECT prefecture,city,town FROM zip_data_split_3 WHERE post_code = ' . $post_code . ' ';
+        // SELECT 'perfecture',city,town FROM zip_data_split_3 WHERE post_code = 6750145
         //クエリを実行します
         $result = mysqli_query($link, $query);
+
         while ($row = mysqli_fetch_array($result)) {
             $post_data[] = $row;
         }
@@ -95,8 +154,6 @@ if (isset($_POST['post_code'])) {
         //接続を閉じます
         mysqli_close($link);
         //接続に失敗した場合
-    } else {
-        print 'DB接続失敗';
     }
 }
 
@@ -127,9 +184,9 @@ if (isset($_POST['post_code'])) {
         <select name="prefecture">
             <?php
             // 都道府県の配列をループさせる
-            foreach ($areas as $key => $area) {
+            foreach ($areas as $area) {
             ?>
-                <option value="<?php print $key; ?>"><?php print $area; ?></option>
+                <option><?php print $area; ?></option>
             <?php
             }
             ?>
@@ -140,13 +197,26 @@ if (isset($_POST['post_code'])) {
 
 
     <!-- ここに検索結果を反映させる -->
+    <?php foreach ($error as $value) { ?>
+        <p><?php print $value; ?></p>
+    <?php } ?>
+
     <?php
-    foreach ($emp_data as $value) {
+    foreach ($post_data as $value) {
     ?>
-        <p><?php print htmlspecialchars($value['COL5'], ENT_QUOTES, 'UTF-8'); ?></p>
-        <p><?php print htmlspecialchars($value['COL6'], ENT_QUOTES, 'UTF-8'); ?></p>
-        <p><?php print htmlspecialchars($value['COL7'], ENT_QUOTES, 'UTF-8'); ?></p>
+        <p><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></p>
+        <p><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></p>
+        <p><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></p>
     <?php  } ?>
+
+    <?php
+    foreach ($post_code_data as $value) {
+    ?>
+        <p><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></p>
+
+    <?php  } ?>
+
+
 </body>
 
 </html>
