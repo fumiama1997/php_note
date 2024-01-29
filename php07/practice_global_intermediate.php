@@ -1,9 +1,13 @@
 <?php
 $result = false;
+<<<<<<< HEAD
 $player ='';
+=======
+$player = '';
+>>>>>>> b31c6b566c711a8cdc295e9ae86e870db3ea114c
 $com = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hand'])) {
 
     $janken = array('グー', 'チョキ', 'パー');
     $player = htmlspecialchars($_POST['hand'], ENT_QUOTES, 'UTF-8');
@@ -28,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($player === 'パー' && $com === 'パー') {
         $result = 'あいこ';
     }
-}   
+}
 ?>
 <!DOCTYPE html>
 <html lang="ja">

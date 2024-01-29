@@ -8,7 +8,6 @@ var_dump($int);
 var_dump($str);
 
 if ($int == $str) {
-
     print '$int == $str is true' . "\n";
 } else {
     print '$int == $str is false' . "\n";
