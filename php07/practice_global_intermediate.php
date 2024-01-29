@@ -1,5 +1,7 @@
 <?php
 $result = false;
+$player ='';
+$com = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 

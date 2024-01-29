@@ -12,7 +12,7 @@ $value =  55.5555;
  round($value); 
  
 // 小数点以下第三位四捨五入の処理を記述
- round($value,3);
+ round($value,2);
  
 ?>
 <!DOCTYPE html>
@@ -26,6 +26,6 @@ $value =  55.5555;
   <p><?php   print floor($value);?></p>
   <p><?php   print  ceil($value);?></p>
   <p><?php   print  round($value);?></p>
-  <p><?php   print  round($value,3);?></p>
+  <p><?php   print  round($value,2);?></p>
 </body>
 </html>
