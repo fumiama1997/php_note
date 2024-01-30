@@ -66,17 +66,19 @@ $post_data = [];
 $error = [];
 $post_code_data = [];
 $regexp_prefecture =  '/.*?[都道府県]/';
-$regexp_city = '/.*?[市町村]/';
+$regexp_city = '/.*?[市]/';
+$regexp_town = '/.*?[町村]/';
 
 
 var_dump($_POST);
 
 // 都道府県・市区町村から住所が検索できる仕様。
 // 都道府県・市区町村のPOSTが飛んできているかの判断
-if (isset($_POST['prefecture']) && isset($_POST['city'])) {
+if (isset($_POST['prefecture']) && isset($_POST['city']) && isset($_POST['town'])) {
 
     $prefecture = $_POST['prefecture'];
     $city = $_POST['city'];
+    $town = $_POST['town'];
     $host = 'localhost'; // データベースのホスト名又はIPアドレス
     $username = 'root';  // MySQLのユーザ名
     $passwd   = 'narait';    // MySQLのパスワード
@@ -96,13 +98,19 @@ if (isset($_POST['prefecture']) && isset($_POST['city'])) {
     }
 
     if ($city === '') {
-        $error[] = '市町村名を入力してください';
+        $error[] = '市名を入力してください';
     } else if (preg_match($regexp_city, $city, $macths) === 0) {
-        $error[] = '市町村名を正しく入力ください';
+        $error[] = '市名を正しく入力ください';
     }
 
+    if ($town === '') {
+        $error[] = '町村名を入力してください';
+    } else if (preg_match($regexp_town, $town, $macths) === 0) {
+        $error[] = '町村名を正しく入力ください';
+    }
     if (empty($error)) {
-        $query = 'SELECT post_code FROM zip_data_split_3 WHERE prefecture = "' .$prefecture . '" AND city = "' .$city . '"  ';
+        $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE prefecture = "' . $prefecture . '" AND city = "'. $city . '" 
+        AND town = "'. $town .'"';
         echo $query;
 
         $result = mysqli_query($link, $query);
@@ -141,7 +149,7 @@ if (isset($_POST['post_code'])) {
         $error[] = '7桁の数値のみ入力してください';
     }
     if (empty($error)) {
-        $query = 'SELECT prefecture,city,town FROM zip_data_split_3 WHERE post_code = ' . $post_code . ' ';
+        $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE post_code = ' . $post_code . ' ';
         // SELECT 'perfecture',city,town FROM zip_data_split_3 WHERE post_code = 6750145
         //クエリを実行します
         $result = mysqli_query($link, $query);
@@ -168,6 +176,17 @@ if (isset($_POST['post_code'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>課題17-6</title>
+    <style type="text/css">
+        table,
+        td,
+        th {
+            border: solid black 1px;
+        }
+
+        table {
+            width: 400px;
+        }
+    </style>
 </head>
 
 <body>
@@ -179,43 +198,59 @@ if (isset($_POST['post_code'])) {
         </p>
     </form>
     <h3>地名から検索</h3>
-    <p>都道府県を選択
     <form method="POST">
-        <select name="prefecture">
-            <?php
-            // 都道府県の配列をループさせる
-            foreach ($areas as $area) {
-            ?>
-                <option><?php print $area; ?></option>
-            <?php
-            }
-            ?>
-        </select>
-        市町村 <input type="text" name="city"> <input type="submit" value="検索">
-        </p>
+        <p>都道府県を選択<br><select name="prefecture">
+                <?php
+                // 都道府県の配列をループさせる
+                foreach ($areas as $area) {
+                ?>
+                    <option><?php print $area; ?></option>
+                <?php
+                }
+                ?>
+            </select>
+            市 <input type="text" name="city">
+            町村<input type="text" name="town"><input type="submit" value="検索"></p>
     </form>
-
 
     <!-- ここに検索結果を反映させる -->
     <?php foreach ($error as $value) { ?>
         <p><?php print $value; ?></p>
     <?php } ?>
+    <table>
+        <tr>
+            <th>郵便番号</th>
+            <th>県</th>
+            <th>市</th>
+            <th>町</th>
+        </tr>
 
-    <?php
-    foreach ($post_data as $value) {
-    ?>
-        <p><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></p>
-        <p><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></p>
-        <p><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></p>
-    <?php  } ?>
+        <?php
+        foreach ($post_data as $value) {
+        ?>
+            <tr>
+                <td><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
+            </tr>
+        <?php  } ?>
 
-    <?php
-    foreach ($post_code_data as $value) {
-    ?>
-        <p><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></p>
 
-    <?php  } ?>
 
+
+        <?php
+        foreach ($post_code_data as $value) {
+        ?>
+            <tr>
+                <td><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
+            </tr>
+
+        <?php  } ?>
+    </table>
 
 </body>
 
