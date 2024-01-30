@@ -20,7 +20,7 @@ $rand = mt_rand(1, 6);
 <body>
     <h1>サイコロゲーム！！！！</h1>
     <p>値は!<?php print $rand; ?></p>
-    <?php if (($rand % 2) == 0) { ?>
+    <?php if (($rand % 2) === 0) { ?>
         <h2 class="em_red">偶数や！</h2>
     <?php } else { ?>
         <h2>奇数か！</h2>

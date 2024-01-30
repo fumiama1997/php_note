@@ -1,6 +1,10 @@
 <?php
 $result = false;
+<<<<<<< HEAD
+$player ='';
+=======
 $player = '';
+>>>>>>> b31c6b566c711a8cdc295e9ae86e870db3ea114c
 $com = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hand'])) {

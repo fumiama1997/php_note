@@ -4,6 +4,8 @@ $my_name = '';
 $gender = '';
 $mail = '';
 
+var_dump($_POST);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 名前の入力チェック
     if ($_POST['my_name'] === '') {
