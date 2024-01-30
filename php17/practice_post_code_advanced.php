@@ -69,9 +69,6 @@ $regexp_prefecture =  '/.*?[都道府県]/';
 $regexp_city = '/.*?[市]/';
 $regexp_town = '/.*?[町村]/';
 
-
-var_dump($_POST);
-
 // 都道府県・市区町村から住所が検索できる仕様。
 // 都道府県・市区町村のPOSTが飛んできているかの判断
 if (isset($_POST['prefecture']) && isset($_POST['city']) && isset($_POST['town'])) {
@@ -111,7 +108,7 @@ if (isset($_POST['prefecture']) && isset($_POST['city']) && isset($_POST['town']
     if (empty($error)) {
         $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE prefecture = "' . $prefecture . '" AND city = "' . $city . '" 
         AND town = "' . $town . '"';
-        echo $query;
+       
 
         $result = mysqli_query($link, $query);
         while ($row = mysqli_fetch_array($result)) {
