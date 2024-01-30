@@ -109,8 +109,8 @@ if (isset($_POST['prefecture']) && isset($_POST['city']) && isset($_POST['town']
         $error[] = '町村名を正しく入力ください';
     }
     if (empty($error)) {
-        $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE prefecture = "' . $prefecture . '" AND city = "'. $city . '" 
-        AND town = "'. $town .'"';
+        $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE prefecture = "' . $prefecture . '" AND city = "' . $city . '" 
+        AND town = "' . $town . '"';
         echo $query;
 
         $result = mysqli_query($link, $query);
