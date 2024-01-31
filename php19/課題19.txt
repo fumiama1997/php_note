@@ -1,0 +1,45 @@
+課題19
+
+1.
+SELECT 
+customer_table.customer_name,
+COUNT(order_table.customer_id) 
+FROM 
+customer_table 
+JOIN order_table 
+ON customer_table.customer_id = order_table.customer_id 
+GROUP BY 
+customer_name;
+
+2.
+SELECT 
+goods_table.goods_name,
+SUM(order_detail_table.quantity) 
+FROM 
+goods_table 
+JOIN order_detail_table 
+ON goods_table.goods_id = order_detail_table.goods_id 
+WHERE goods_table.price = 100 
+GROUP BY 
+goods_name;
+
+
+
+
+3.
+SELECT customer_table.customer_name,
+SUM(goods_table.price*order_detail_table.quantity) AS total 
+FROM 
+goods_table 
+JOIN order_detail_table 
+ON goods_table.goods_id = order_detail_table.goods_id 
+JOIN order_table 
+ON order_detail_table.order_id = order_table.order_id 
+JOIN customer_table 
+ON order_table.customer_id = customer_table.customer_id 
+GROUP BY 
+customer_name;
+
+
+
+
