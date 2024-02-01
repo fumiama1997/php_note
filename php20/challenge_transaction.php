@@ -116,6 +116,8 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 </head>
 
 <body>
+    <!-- 購入したものの表示 -->
+    <!-- 残ポイントの反映を表示 -->
     <?php if (empty($message) !== TRUE) { ?>
         <p><?php print $message; ?></p>
     <?php } ?>
