@@ -24,6 +24,8 @@ $message     = '';     // 購入処理完了時の表示メッセージ
 $point       = 0;      // 保有ポイント情報
 $err_msg     = [];     // エラーメッセージ
 $point_gift_list = []; // ポイントで購入できる景品
+$point_gift_id = '';
+
 // コネクション取得
 if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 
@@ -48,12 +50,51 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     mysqli_free_result($result);
     // POSTの場合はポイントでの景品購入処理
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        
-        /*
+        //postで飛んできた情報
+        $point_gift_id = $_POST['point_gift_id'];
+        //飛んできた情報を使って商品のポイント額を取得する
+        $gift_point_sql = 'SELECT point_gift_table.point WHERE  point_gift_id = ' . $point_gift_id . '';
+
+        if ($result = mysqli_query($link, $gift_point_sql)) {
+            // １件取得
+            $row = mysqli_fetch_assoc($result);
+            // 変数に格納
+            if (isset($row['point']) === TRUE) {
+                $point = $row['point'];
+            }
+        }
+
+        //ポイント残数としてブラウザに表示する。
+        $Remaining_point_sql = 'SELECT point_customer_table.point - ' . $point . ' AS Remaining_Point FROM point_customer_table JOIN point_history_table ON point_customer_table.customer_id = point_history_table.customer_id JOIN point_gift_table ON point_history_table.point_gift_id = point_gift_table.point_gift_id';
+        // クエリ実行
+        if ($result = mysqli_query($link, $Remaining_point_sql)) {
+            // １件取得
+            $row = mysqli_fetch_assoc($result);
+            // 変数に格納
+            if (isset($row['point']) === TRUE) {
+                $point = $row['point'];
+            }
+        }
+    }
+
+
+    //ポイント残数をデータベースに反映する。
+    $Update_point_sql = 'UPDATE point_customer_table SET point = ' . $Remaining_point . ' WHERE ' . 
+    
+    //クエリ実行文記載
+    
+
+//これ何？
+    $customer_id . '';
+
+
+
+
+    /*
         * ここに購入時の処理を記載してください
         * 既存のソースを変更したい場合、変更が必要な理由を講師に説明し、許可をとってください。
         */
-    }
+
     /**
      * 景品情報を取得
      */
@@ -112,6 +153,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             </ul>
         </form>
         <p>※サンプルのためポイント購入は1景品 & 1個に固定</p>
+        <p><?php print $Remaining_Point; ?></p>
     </section>
 </body>
 
