@@ -50,6 +50,10 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     mysqli_free_result($result);
     // POSTの場合はポイントでの景品購入処理
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        /*
+        * ここに購入時の処理を記載してください
+        * 既存のソースを変更したい場合、変更が必要な理由を講師に説明し、許可をとってください。
+        */
         //postで飛んできた情報
         $point_gift_id = $_POST['point_gift_id'];
         //飛んできた情報を使って商品のポイント額を取得する
@@ -75,26 +79,10 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 $point = $row['point'];
             }
         }
+        //ポイント残数をデータベースに反映する。
+        $Update_point_sql = 'UPDATE point_customer_table SET point = ' . $Remaining_point . ' WHERE ';
+        //クエリの実行
     }
-
-
-    //ポイント残数をデータベースに反映する。
-    $Update_point_sql = 'UPDATE point_customer_table SET point = ' . $Remaining_point . ' WHERE ' . 
-    
-    //クエリ実行文記載
-    
-
-//これ何？
-    $customer_id . '';
-
-
-
-
-    /*
-        * ここに購入時の処理を記載してください
-        * 既存のソースを変更したい場合、変更が必要な理由を講師に説明し、許可をとってください。
-        */
-
     /**
      * 景品情報を取得
      */
