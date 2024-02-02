@@ -32,9 +32,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     }
     mysqli_free_result($result);
     // POSTの場合はポイントでの景品購入処理
-
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
         //postで飛んできた情報
         $point_gift_id = $_POST['point_gift_id'];
         switch ($point_gift_id) {
@@ -65,17 +63,15 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             'created_at' => $date
         ];
         // point_history_tableへ購入履歴をINSERT
-
         $point_history_sql = 'INSERT INTO point_history_table(customer_id,point_gift_id,created_at) VALUES(\'' . implode('\',\'', $data) . '\')';
 
-        //クエリの実行が失敗した場合は
+        //クエリの実行が失敗した場合
         if (($result = mysqli_query($link, $point_history_sql)) === false) {
             $err_msg[] = 'SQL失敗:';
         }
 
         //飛んできた情報を使って商品のポイント額を取得する
         $gift_point_sql = 'SELECT point FROM point_gift_table WHERE point_gift_id = ' . $point_gift_id . '';
-        // SELECT point FROM point_gift_table WHERE point_gift_id = 1;
 
         if ($result = mysqli_query($link, $gift_point_sql)) {
             // １件取得
@@ -100,6 +96,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         } else {
             $err_msg[] = 'SQL失敗:' . $remaining_point_sql;
         }
+
         //ポイント残数をデータベースに反映する。
         $update_point_sql = 'UPDATE point_customer_table SET point = ' . $point . ' WHERE customer_id = ' . $customer_id . '';
         //クエリの実行
@@ -115,9 +112,6 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             mysqli_rollback($link);
         }
     }
-    /**
-     * 景品情報を取得
-     */
     // SQL
     $sql = 'SELECT point_gift_id, name, point FROM point_gift_table';
     // クエリ実行
