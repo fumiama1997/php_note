@@ -6,33 +6,37 @@ $direction = array('1', '2');
 
 $table_count = '0';
 $inside_count = '0';
+$number = '';
 
-if (intval($_POST['number']) === 10) {
-    
-    for ($i = 0; $i < 10; $i = $i + 1) {
-          $array_rnd = array_rand($direction, 1);
-        if ($array_rnd == '1') {
-            $table_count = $table_count + 1;
-        } else {
-            $inside_count = $inside_count + 1;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['number'])) {
+
+    if (intval($_POST['number']) === 10) {
+
+        for ($i = 0; $i < 10; $i = $i + 1) {
+            $array_rnd = array_rand($direction, 1);
+            if ($array_rnd == '1') {
+                $table_count = $table_count + 1;
+            } else {
+                $inside_count = $inside_count + 1;
+            }
         }
-    }
-} elseif (intval($_POST['number']) === 100) {
-    for ($i = 0; $i < 100; $i = $i + 1) {
-        $array_rnd = array_rand($direction, 1);
-        if ($array_rnd == '1') {
-            $table_count = $table_count + 1;
-        } else {
-            $inside_count = $inside_count + 1;
+    } elseif (intval($_POST['number']) === 100) {
+        for ($i = 0; $i < 100; $i = $i + 1) {
+            $array_rnd = array_rand($direction, 1);
+            if ($array_rnd == '1') {
+                $table_count = $table_count + 1;
+            } else {
+                $inside_count = $inside_count + 1;
+            }
         }
-    }
-} elseif (intval($_POST['number']) === 1000) {
-    for ($i = 0; $i < 1000; $i = $i + 1) {
-        $array_rnd = array_rand($direction, 1);
-        if ($array_rnd == '1') {
-            $table_count = $table_count + 1;
-        } else {
-            $inside_count = $inside_count + 1;
+    } elseif (intval($_POST['number']) === 1000) {
+        for ($i = 0; $i < 1000; $i = $i + 1) {
+            $array_rnd = array_rand($direction, 1);
+            if ($array_rnd == '1') {
+                $table_count = $table_count + 1;
+            } else {
+                $inside_count = $inside_count + 1;
+            }
         }
     }
 }
