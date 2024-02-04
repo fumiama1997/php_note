@@ -1,6 +1,6 @@
 <?php
 
-$data = '0';
+$data = 0;
 
 ?>
 
@@ -16,7 +16,7 @@ $data = '0';
 <body>
 
     <?php
-    for ($i = 1; $data <= 1000; $i = $i + 1) {
+    for ($i = 1; $data <= 1000; $i++) {
         $data = $data + $i;
         if ($data >= 1000) {
             print $i . '<br>' . $data;

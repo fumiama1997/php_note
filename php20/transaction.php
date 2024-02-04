@@ -53,7 +53,11 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 'quantity' => $quantity
             ];
             // 注文詳細情報をinsertする
-            $sql = 'INSERT INTO order_detail_table (order_id, goods_id, quantity) VALUES(\'' . implode('\',\'', $data) . '\')';
+            $sql = 'INSERT INTO order_detail_table (order_id, goods_id, quantity) 
+            VALUES(\'' . implode('\',\'', $data) . '\')';
+            var_dump($data);
+            var_dump($sql);
+            var_dump(implode('\',\'', $data));
             // insertを実行する
             if (mysqli_query($link, $sql) !== TRUE) {
                 $err_msg[] = 'order_detail_table: insertエラー:' . $sql;
