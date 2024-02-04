@@ -16,7 +16,7 @@ $class = ['ガリ勉' => '鈴木', '委員長' => '佐藤', 'セレブ' => '斎�
     <?php
     foreach ($class as $key => $value) {
     ?>
-        <p><?php print $key; ?>: <?php print $value; ?></p>
+        <p><?php print $value; ?>さんのアダ名は<?php print $key; ?>です。</p>
     <?php
     }
     ?>
