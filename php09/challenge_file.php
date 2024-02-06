@@ -1,4 +1,3 @@
-
 <?php
 $filename = './challenge_log.txt';
 $comment = '';
@@ -10,11 +9,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (($fp = fopen($filename, 'a')) !== FALSE) {
-        if (fwrite($fp, $date .'  '. $comment . "\n") === FALSE) {
+        if (fwrite($fp, $date . '  ' . $comment . "\n") === FALSE) {
             print 'ファイル書き込み失敗:  ' . $filename;
         }
         fclose($fp);
-      
     }
 }
 

@@ -2,37 +2,17 @@
 <?php
 
 //表と裏をランダムに出す
-$direction = array('1', '2');
+$coin = array('t' => 0, 'b' => 0);
+$number = '';
 
-$table_count = '0';
-$inside_count = '0';
-
-if (intval($_POST['number']) === 10) {
-    
-    for ($i = 0; $i < 10; $i = $i + 1) {
-          $array_rnd = array_rand($direction, 1);
-        if ($array_rnd == '1') {
-            $table_count = $table_count + 1;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['number'])) {
+    $number = $_POST['number'];
+    for ($i = 0; $i < $number; $i++) {
+        $array_rnd = array_rand($coin, 1);
+        if ($array_rnd == 't') {
+            $coin['t']++;
         } else {
-            $inside_count = $inside_count + 1;
-        }
-    }
-} elseif (intval($_POST['number']) === 100) {
-    for ($i = 0; $i < 100; $i = $i + 1) {
-        $array_rnd = array_rand($direction, 1);
-        if ($array_rnd == '1') {
-            $table_count = $table_count + 1;
-        } else {
-            $inside_count = $inside_count + 1;
-        }
-    }
-} elseif (intval($_POST['number']) === 1000) {
-    for ($i = 0; $i < 1000; $i = $i + 1) {
-        $array_rnd = array_rand($direction, 1);
-        if ($array_rnd == '1') {
-            $table_count = $table_count + 1;
-        } else {
-            $inside_count = $inside_count + 1;
+            $coin['b']++;
         }
     }
 }
@@ -51,8 +31,8 @@ if (intval($_POST['number']) === 10) {
 
     <article id="wrap">
         <section>
-            <p>表:<?php print $table_count; ?> 回</p>
-            <p>裏:<?php print $inside_count; ?> 回</p>
+            <p>表:<?php print $coin['t']; ?> 回</p>
+            <p>裏:<?php print $coin['b']; ?> 回</p>
         </section>
         <form method="POST">
             <select name="number">

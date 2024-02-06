@@ -24,10 +24,30 @@ if (is_readable($filename) == TRUE) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>郵便番号と住所</title>
+    <style type="text/css">
+        table,
+        td,
+        th {
+            border: solid black 1px;
+        }
+
+        table {
+            width: 200px;
+        }
+    </style>
 </head>
 
+<<<<<<< HEAD
 <body>
     <?php foreach ($data as $address) {
+=======
+
+<body>
+    <p>以下にファイルから読み込んだ情報を表示</p>
+    
+    <?php foreach ($data as $address) {
+
+>>>>>>> 71d65aa792036fcac24453f5f658de5482873966
         print $address . '<br>';
     } ?>
 

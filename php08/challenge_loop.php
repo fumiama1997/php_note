@@ -15,25 +15,25 @@ $data = '1';
 <html lang="ja">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>課題4</title>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>課題4</title>
 </head>
 
 <body>
-    <?php
-    for ($i = 1; $i <= 100; $i = $i + 1) {
-    if($i % 3 === 0 && $i % 5 === 0){
-       print 'FizzBuzz'.'<br>' ;
-    } else if($i % 3 === 0) {
-       print 'Fizz'.'<br>';
-    } elseif($i % 5 === 0) {
-       print 'Buzz'.'<br>';
-    } else {
-       print $i .'<br>' ;
-    }
+   <?php
+   for ($i = 1; $i <= 100; $i = $i + 1) {
+      if ($i % 3 === 0 && $i % 5 === 0) {
+         print 'FizzBuzz' . '<br>';
+      } else if ($i % 3 === 0) {
+         print 'Fizz' . '<br>';
+      } elseif ($i % 5 === 0) {
+         print 'Buzz' . '<br>';
+      } else {
+         print $i . '<br>';
+      }
    }
-    ?>
+   ?>
 
 
 
