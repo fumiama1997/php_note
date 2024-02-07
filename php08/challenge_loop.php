@@ -9,7 +9,7 @@
 なお、どの繰り返し処理を利用するかは自由です。 -->
 
 <?php
-$data = '1';
+$data = 1;
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -22,7 +22,7 @@ $data = '1';
 
 <body>
    <?php
-   for ($i = 1; $i <= 100; $i = $i + 1) {
+   for ($i = 1; $i <= 100; $i++) {
       if ($i % 3 === 0 && $i % 5 === 0) {
          print 'FizzBuzz' . '<br>';
       } else if ($i % 3 === 0) {

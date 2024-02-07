@@ -9,16 +9,9 @@ VALUES('ひこにゃん','滋賀県');
 INSERT INTO character_table(character_name,pref)
 VALUES('まりもっこり','北海道');
 
-
 2.
 テーブルの全データを表示
-SELECT 
-character_id,character_name,pref 
-FROM 
-character_table;
-
-
-
+SELECT character_id,character_name,pref FROM character_table;
 
 3. レコード追加
 INSERT INTO emp_table(emp_id,emp_name,job,age) 
