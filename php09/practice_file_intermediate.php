@@ -1,13 +1,34 @@
 <!-- 日本郵便のページにある郵便番号のデータを利用し、「郵便番号」「住所」のデータを表示してください。 -->
 
 <?php
-$filename = './zip_data_split_1.txt';
+// <?php
+// // ファイルから読み込んだ文字列をカンマで分割して順番に出力する方法
+
+// // 1. ファイルを読み込む（例: sample.txt）
+// $filename = 'sample.txt';
+// $file_contents = file_get_contents($filename);
+
+// // 2. カンマで分割して配列に格納
+// $split_array = preg_split('/,/', $file_contents);
+
+// // 3. 配列の要素を順番に出力
+// foreach ($split_array as $element) {
+//     echo $element . "\n";
+// }
+
+
+
+
+$filename = './zip_data_split_1.csv';
+
 
 if (is_readable($filename) == TRUE) {
 
     if (($fp = fopen($filename, 'r')) == TRUE) {
         while (($tmp = fgets($fp)) == TRUE) {
-            $data[] = htmlspecialchars($tmp, ENT_QUOTES, 'UTF-8');
+            $data = htmlspecialchars($tmp, ENT_QUOTES, 'UTF-8');
+            $split = preg_split("/,/", $data);
+            // var_dump($split);
         }
         fclose($fp);
     }
@@ -32,7 +53,7 @@ if (is_readable($filename) == TRUE) {
         }
 
         table {
-            width: 200px;
+            width: 300px;
         }
     </style>
 </head>
@@ -40,12 +61,23 @@ if (is_readable($filename) == TRUE) {
 
 <body>
     <p>以下にファイルから読み込んだ情報を表示</p>
-    
-    <?php foreach ($data as $address) {
+    <p>住所データ</p>
+    <table>
+        <tr>
+            <th>郵便番号</td>
+            <th>都道府県</td>
+            <th>市区町村</td>
+            <th>町域</td>
+        </tr>
 
-        print $address . '<br>';
-    } ?>
+        <?php
+      foreach($split as $a){
+        print $a[1];
+      }
 
+        ?>
+
+    </table>
 
 
 </body>
