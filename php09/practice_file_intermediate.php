@@ -7,7 +7,9 @@ if (is_readable($filename) == TRUE) {
 
     if (($fp = fopen($filename, 'r')) == TRUE) {
         while (($tmp = fgets($fp)) == TRUE) {
+            //文字列内のダブルクォーテーションを取り除き変数へ
             $trim = str_replace('"', "", $tmp);
+            //カンマ区切りで文字列を配列へ入れていく
             $array[] = explode(',', $trim);
         }
         fclose($fp);

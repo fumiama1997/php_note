@@ -61,13 +61,13 @@ if (isset($_POST['job']) === TRUE) {
         }
 
         table {
-            width: 200px;
+            width: 500px;
         }
     </style>
 </head>
 
 <body>
-    <h1>表示する職種を選択してください。</h1>
+    <p>表示する職種を選択してください。</p>
 
 
     <form method="POST">
@@ -79,6 +79,7 @@ if (isset($_POST['job']) === TRUE) {
         </select>
         <input type="submit" value="表示">
     </form>
+    <p>社員一覧</p>
     <table>
         <tr>
             <th>社員番号</th>
@@ -91,7 +92,7 @@ if (isset($_POST['job']) === TRUE) {
         foreach ($emp_data as $value) {
         ?>
             <tr>
-                <td></td>
+                <td><?php print htmlspecialchars($value['emp_id'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><?php print htmlspecialchars($value['emp_name'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><?php print htmlspecialchars($value['job'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><?php print htmlspecialchars($value['age'], ENT_QUOTES, 'UTF-8'); ?></td>
