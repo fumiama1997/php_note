@@ -1,21 +1,20 @@
 <!-- 日本郵便のページにある郵便番号のデータを利用し、「郵便番号」「住所」のデータを表示してください。 -->
 
 <?php
-$filename = './zip_data_split_1.txt';
+$filename = './zip_data_split_1.csv';
 
 if (is_readable($filename) == TRUE) {
 
     if (($fp = fopen($filename, 'r')) == TRUE) {
         while (($tmp = fgets($fp)) == TRUE) {
-            $data[] = htmlspecialchars($tmp, ENT_QUOTES, 'UTF-8');
+            $trim = str_replace('"', "", $tmp);
+            $array[] = explode(',', $trim);
         }
         fclose($fp);
     }
 } else {
     $data[] = 'ファイルがありません';
 }
-
-
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -29,27 +28,55 @@ if (is_readable($filename) == TRUE) {
         td,
         th {
             border: solid black 1px;
+            ;
+            border-collapse: collapse;
+
+        }
+
+        th {
+            border-bottom: solid black 2px;
+        }
+
+        tr:nth-child(2n-1) {
+            border-bottom: solid black 2px;
         }
 
         table {
-            width: 200px;
+            width: 800px;
         }
     </style>
 </head>
 
-<<<<<<< HEAD
 <body>
-    <?php foreach ($data as $address) {
-=======
 
-<body>
-    <p>以下にファイルから読み込んだ情報を表示</p>
-    
-    <?php foreach ($data as $address) {
+    <p>以下にファイルから読み込んだ住所データを表示</p>
 
->>>>>>> 71d65aa792036fcac24453f5f658de5482873966
-        print $address . '<br>';
-    } ?>
+    <p>住所データ</p>
+    <table>
+        <tr>
+            <th>郵便番号</th>
+            <th>都道府県</th>
+            <th>市区町村</th>
+            <th>町域</th>
+        </tr>
+
+        <?php
+        foreach ($array as $value) { ?>
+            <tr>
+                <td><?php print $value[0]; ?></td>
+                <td><?php print $value[4]; ?></td>
+                <td><?php print $value[5]; ?></td>
+                <td><?php print $value[6]; ?></td>
+            </tr>
+        <?php }; ?>
+    </table>
+
+
+
+
+
+
+
 
 
 

@@ -5,7 +5,7 @@ $comment = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['comment'])) {
         $comment = $_POST['comment'];
-        $date = date('Y-m-d H:i');
+        $date = date('m月d日 H:i:s');
     }
 
     if (($fp = fopen($filename, 'a')) !== FALSE) {
