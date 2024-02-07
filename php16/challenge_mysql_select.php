@@ -6,20 +6,33 @@
 
 $emp_data = [];
 $job = '';
+$host = 'localhost'; // データベースのホスト名又はIPアドレス
+$username = 'root';  // MySQLのユーザ名
+$passwd   = 'narait';    // MySQLのパスワード
+$dbname   = 'user';    // データベース名
+$link = mysqli_connect($host, $username, $passwd, $dbname);
+// 接続成功した場合
+if ($link) {
+    // 文字化け防止
+    mysqli_set_charset($link, 'utf8');
+}
+
+$query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
+$result = mysqli_query($link, $query);
+
+
+while ($row = mysqli_fetch_array($result)) {
+    $emp_alldata[] = $row;
+}
+
+
 
 if (isset($_POST['job']) === TRUE) {
 
+
+
     $job = $_POST['job'];
-    $host = 'localhost'; // データベースのホスト名又はIPアドレス
-    $username = 'root';  // MySQLのユーザ名
-    $passwd   = 'narait';    // MySQLのパスワード
-    $dbname   = 'user';    // データベース名
-    $link = mysqli_connect($host, $username, $passwd, $dbname);
-    // 接続成功した場合
-    if ($link) {
-        // 文字化け防止
-        mysqli_set_charset($link, 'utf8');
-    }
+
     if ($job === 'all') {
         $query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
     } elseif ($job === 'manager') {
@@ -61,13 +74,13 @@ if (isset($_POST['job']) === TRUE) {
         }
 
         table {
-            width: 200px;
+            width: 500px;
         }
     </style>
 </head>
 
 <body>
-    <h1>表示する職種を選択してください。</h1>
+    <p>表示する職種を選択してください。</p>
 
 
     <form method="POST">
@@ -79,6 +92,7 @@ if (isset($_POST['job']) === TRUE) {
         </select>
         <input type="submit" value="表示">
     </form>
+    <p>社員一覧</p>
     <table>
         <tr>
             <th>社員番号</th>
@@ -86,12 +100,25 @@ if (isset($_POST['job']) === TRUE) {
             <th>職種</th>
             <th>年齢</th>
         </tr>
+        <?php
+        if (empty($_POST)) foreach ($emp_alldata as $value) {
+        ?>
+            <tr>
+                <td><?php print htmlspecialchars($value['emp_id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['emp_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['job'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['age'], ENT_QUOTES, 'UTF-8'); ?></td>
+            </tr>
+
+        <?php
+        }
+        ?>
 
         <?php
         foreach ($emp_data as $value) {
         ?>
             <tr>
-                <td></td>
+                <td><?php print htmlspecialchars($value['emp_id'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><?php print htmlspecialchars($value['emp_name'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><?php print htmlspecialchars($value['job'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><?php print htmlspecialchars($value['age'], ENT_QUOTES, 'UTF-8'); ?></td>

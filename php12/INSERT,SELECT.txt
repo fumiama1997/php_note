@@ -1,14 +1,41 @@
 レコード追加
+1.
+INSERT INTO character_table(character_name,pref)
+VALUES('ふなっしー','千葉県');
 
-INSERT INTO emp_table(emp_id,emp_name,job,age) VALUE(1,'山田太郎','manager',50);
+INSERT INTO character_table(character_name,pref)
+VALUES('ひこにゃん','滋賀県');
 
-INSERT INTO emp_table(emp_id,emp_name,job,age) VALUE(2,'伊藤静香','manager',45);
-
-INSERT INTO emp_table(emp_id,emp_name,job,age) VALUE(3,'鈴木三郎','analyst',30);
-
-INSERT INTO emp_table(emp_id,emp_name,job,age) VALUE(4,'山田花子','clerk',24);
+INSERT INTO character_table(character_name,pref)
+VALUES('まりもっこり','北海道');
 
 
-作成したテーブルより、emp_idとemp_nameのみ表示
-SELECT emp_id,emp_name  FROM emp_table;
+2.
+テーブルの全データを表示
+SELECT 
+character_id,character_name,pref 
+FROM 
+character_table;
+
+
+
+
+3. レコード追加
+INSERT INTO emp_table(emp_id,emp_name,job,age) 
+VALUE(1,'山田太郎','manager',50);
+
+INSERT INTO emp_table(emp_id,emp_name,job,age) 
+VALUE(2,'伊藤静香','manager',45);
+
+INSERT INTO emp_table(emp_id,emp_name,job,age) 
+VALUE(3,'鈴木三郎','analyst',30);
+
+INSERT INTO emp_table(emp_id,emp_name,job,age) 
+VALUE(4,'山田花子','clerk',24);
+
+4.作成したテーブルより、emp_idとemp_nameのみ表示
+SELECT 
+emp_id,emp_name  
+FROM 
+emp_table;
 

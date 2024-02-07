@@ -10,7 +10,6 @@
 利用者の名前、コメントのどちらか又は両方が未入力だった場合、エラーメッセージを表示し、発言できないようにする。
 テーブルの詳細は自由です。適切な設定をしてください。 -->
 <?php
-$filename = './challenge_log.txt';
 $comment = '';
 $name = '';
 $nameLimit = '20';
@@ -18,21 +17,29 @@ $commentLimit = '100';
 $error = [];
 $board_data = [];
 
+$host = 'localhost'; // データベースのホスト名又はIPアドレス
+$username = 'root';  // MySQLのユーザ名
+$passwd   = 'narait';    // MySQLのパスワード
+$dbname   = 'user';    // データベース名
+$link = mysqli_connect($host, $username, $passwd, $dbname);
+
+// 接続成功した場合
+if ($link) {
+    // 文字化け防止
+    mysqli_set_charset($link, 'utf8');
+}
+
+$query = 'SELECT board_id,board_name,comment,datetime FROM board';
+$result = mysqli_query($link, $query);
+
+while ($row = mysqli_fetch_array($result)) {
+    $goods_alldata[] = $row;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $name = $_POST['name'];
     $comment = $_POST['comment'];
-    $host = 'localhost'; // データベースのホスト名又はIPアドレス
-    $username = 'root';  // MySQLのユーザ名
-    $passwd   = 'narait';    // MySQLのパスワード
-    $dbname   = 'user';    // データベース名
-    $link = mysqli_connect($host, $username, $passwd, $dbname);
-
-    // 接続成功した場合
-    if ($link) {
-        // 文字化け防止
-        mysqli_set_charset($link, 'utf8');
-    }
     // 名前の入力チェック、20文字以内かをチェック
     if ($_POST['name'] === '') {
         $error['name'] = '名前を入力してください';
@@ -60,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         print '追加成功';
 
         //全レコードを取得
-        $query = 'SELECT * FROM board';
+        $query = 'SELECT board_id,board_name,comment,datetime FROM board';
         //上記クエリを実行
         $result = mysqli_query($link, $query);
 
@@ -90,17 +97,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p>名前: <input type="text" name="name"> ひとこと: <input type="text" name="comment"> <input type="submit" value="送信"></p>
     </form>
 
+    <p>発言一覧</p>
+    <?php
+    if (empty($_POST)) {
+        foreach ($goods_alldata as $value) {
+    ?>
+
+            <p><?php print htmlspecialchars($value['board_name'], ENT_QUOTES, 'UTF-8'); ?>
+                <?php print htmlspecialchars($value['comment'], ENT_QUOTES, 'UTF-8'); ?>
+                <?php print htmlspecialchars($value['datetime'], ENT_QUOTES, 'UTF-8'); ?></p>
+
+    <?php
+        }
+    }
+    ?>
+    <?php foreach ($board_data as $value) { ?>
+
+        <p><?php print htmlspecialchars($value['board_name'], ENT_QUOTES, 'UTF-8'); ?>: <?php print htmlspecialchars($value['comment'], ENT_QUOTES, 'UTF-8'); ?>: <?php print htmlspecialchars($value['datetime'], ENT_QUOTES, 'UTF-8'); ?> </p>
+
+    <?php  } ?>
+
 
     <?php foreach ($error as $value) { ?>
         <p><?php print $value; ?></p>
     <?php } ?>
 
 
-    <?php foreach ($board_data as $value) { ?>
-
-        <p><?php print htmlspecialchars($value['board_name'], ENT_QUOTES, 'UTF-8'); ?>: <?php print htmlspecialchars($value['comment'], ENT_QUOTES, 'UTF-8'); ?>: <?php print htmlspecialchars($value['datetime'], ENT_QUOTES, 'UTF-8'); ?> </p>
-
-    <?php  } ?>
 
 
 
