@@ -4,9 +4,9 @@
 
 
 <?php
-$regexp_mail   = '/[a-zA-Z0-9_.+-]+@[a-zA-Z0-9_.+-]+.[a-zA-Z0-9_.+-]+/';
+$regexp_mail   = '/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9_.+-]+.[a-zA-Z0-9_.+-]+$/';
 // パスワードは半角英数字記号で6文字以上18文字以下のみ可能とします
-$regexp_password = '/[a-z0-9.\/?%&=]{6,18}/';
+$regexp_password = '/^[a-z0-9.\/?%&=]{6,18}$/';
 $msg = [];
 $error = [];
 $success = '';
@@ -16,16 +16,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     //メールのバリデーション・正規表現
-    if ($_POST['mail'] === '') {
+    if ($mail === '') {
         $error[] = 'メールアドレスを入力してください<br>';
-    } else if (preg_match($regexp_mail, $mail, $macthes) === 0) {
+    } else if (preg_match($regexp_mail, $mail, $matches) === 0) {
         $error[] = '正しくメールアドレスを入力してください<br>';
     }
 
     //パスワードのバリデーション・正規表現
-    if ($_POST['password'] === '') {
-        $error['password'] = 'パスワードを入力してください<br>';
-    } else if (preg_match($regexp_password, $password, $macthes) === 0) {
+    if ($password === '') {
+        $error[] = 'パスワードを入力してください<br>';
+    } else if (preg_match($regexp_password, $password, $matches) === 0) {
         $error[] = 'パスワードは半角英数字記号で6文字以上18文字以下で入力ください<br>';
     }
     if (empty($error)) {

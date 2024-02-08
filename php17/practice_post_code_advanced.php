@@ -49,13 +49,13 @@ $areas = [
     '沖縄県',
 ];
 $post_code = '';
-$regexp_post_code =  '/[0-9]{7}/';
+$regexp_post_code =  '/^[0-9]{7}$/';
 $post_data = [];
 $error = [];
 $post_code_data = [];
-$regexp_prefecture =  '/.*?[都道府県]/';
-$regexp_city = '/.*?[市]/';
-$regexp_town = '/.*?[町村]/';
+$regexp_prefecture =  '/^.*?[都道府県]$/';
+$regexp_city = '/^.*?[市]$/';
+$regexp_town = '/^.*?[町村]$/';
 
 // 都道府県・市区町村から住所が検索できる仕様。
 // 都道府県・市区町村のPOSTが飛んできているかの判断
@@ -195,7 +195,8 @@ if (isset($_POST['post_code'])) {
                 ?>
             </select>
             市区町村 <input type="text" name="city_town">
-            <input type="submit" value="検索"></p>
+            <input type="submit" value="検索">
+        </p>
     </form>
 
     <!-- ここに検索結果を反映させる -->
