@@ -39,12 +39,14 @@ if (is_readable($filename) == TRUE) {
             border-bottom: solid black 2px;
         }
 
+        /* 学校で課題やる際に奇数のレコードは下線が太くなっていた為 */
         tr:nth-child(2n-1) {
-            border-bottom: solid black 2px;
+            border-bottom: solid black 3px;
         }
 
         table {
             width: 800px;
+
         }
     </style>
 </head>
@@ -73,13 +75,9 @@ if (is_readable($filename) == TRUE) {
         <?php }; ?>
     </table>
 
+    ?>
 
-
-
-
-
-
-
+    </table>
 
 
 </body>
