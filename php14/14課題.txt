@@ -1,7 +1,7 @@
 14-3 課題
 1.emp_tableで、emp_idが1のjobをCTOに変更してください。
 
-UPDATE  emp_table SET job = 'CTO' WHERE emp_id = 1 ;
+UPDATE emp_table SET job = 'CTO' WHERE emp_id = 1 ;
 
 2.emp_tableで、ageが40以上のレコードを削除してください。
 

@@ -32,7 +32,6 @@ if (is_readable($filename) == TRUE) {
             border: solid black 1px;
             ;
             border-collapse: collapse;
-
         }
 
         th {

@@ -1,35 +1,25 @@
 <?php
-//全員(all)を選択ならすべてを$emp_data[]に入れる。
-//マネージャー(manager)なら emp_id 1,2のみ配列に入れる。
-//アナリスト(analyst)ならemp_id 3のみ配列に入れる。
-//クラーク(clerk)ならemp_id4のみ配列に入れる。
-
 $emp_data = [];
-$job = '';
-$host = 'localhost'; // データベースのホスト名又はIPアドレス
-$username = 'root';  // MySQLのユーザ名
-$passwd   = 'narait';    // MySQLのパスワード
-$dbname   = 'user';    // データベース名
+$host = 'localhost';
+$username = 'root';
+$passwd   = 'narait';
+$dbname   = 'user';
 $link = mysqli_connect($host, $username, $passwd, $dbname);
-// 接続成功した場合
+
 if ($link) {
-    // 文字化け防止
+
     mysqli_set_charset($link, 'utf8');
 }
 
 $query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
-$result = mysqli_query($link, $query);
 
+$result = mysqli_query($link, $query);
 
 while ($row = mysqli_fetch_array($result)) {
     $emp_alldata[] = $row;
 }
 
-
-
 if (isset($_POST['job']) === TRUE) {
-
-
 
     $job = $_POST['job'];
 
@@ -57,8 +47,6 @@ if (isset($_POST['job']) === TRUE) {
     mysqli_close($link);
 }
 ?>
-
-
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -81,7 +69,6 @@ if (isset($_POST['job']) === TRUE) {
 
 <body>
     <p>表示する職種を選択してください。</p>
-
 
     <form method="POST">
         <select name="job">
@@ -109,7 +96,6 @@ if (isset($_POST['job']) === TRUE) {
                 <td><?php print htmlspecialchars($value['job'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><?php print htmlspecialchars($value['age'], ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
-
         <?php
         }
         ?>

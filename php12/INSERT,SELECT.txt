@@ -27,8 +27,5 @@ INSERT INTO emp_table(emp_id,emp_name,job,age)
 VALUE(4,'山田花子','clerk',24);
 
 4.作成したテーブルより、emp_idとemp_nameのみ表示
-SELECT 
-emp_id,emp_name  
-FROM 
-emp_table;
+SELECT emp_id,emp_name FROM emp_table;
 
