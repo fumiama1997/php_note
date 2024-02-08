@@ -1,16 +1,4 @@
-<!-- 郵便番号及び住所を検索するシステムを1から作成してください。以下の要件を満たせば、ソースコード及びデータベースの詳細は自由となります。
-
-郵便番号及び住所の情報をデータベースで管理する。
-郵便番号から住所が検索できる。
-検索結果は一覧で「郵便番号、住所」の最低限2つを1行ずつ表示する。
-郵便番号が未入力だった場合、エラーメッセージを表示する。
-郵便番号は7桁の数値のみ検索可能とし、それ以外はエラーメッセージを表示する。
-都道府県と市区町村から住所が検索できる。
-都道府県、市区町村のどちらか又は両方が未入力だった場合、エラーメッセージを表示する※どちらか片方だけの検索禁止
-郵便番号、都道府県、市区町村の入力の前後にある全角及び半角スペースを削除する。入力値チェックや検索はこの後に行う。 例)「 1100001　」→「1100001」
-検索結果が10件を超えた場合、表示結果を複数ページに分ける。 ※「前へ」「次へ」のようなリンクによりページ切り替えができる -->
 <?php
-// 都道府県を配列で定義
 $areas = [
     '北海道',
     '青森県',
@@ -76,16 +64,14 @@ if (isset($_POST['prefecture']) && isset($_POST['city']) && isset($_POST['town']
     $prefecture = $_POST['prefecture'];
     $city = $_POST['city'];
     $town = $_POST['town'];
+
     $host = 'localhost'; // データベースのホスト名又はIPアドレス
     $username = 'root';  // MySQLのユーザ名
     $passwd   = 'narait';    // MySQLのパスワード
     $dbname   = 'post';    // データベース名
     $link = mysqli_connect($host, $username, $passwd, $dbname);
 
-    // 接続成功した場合
     if ($link) {
-
-        // 文字化け防止
         mysqli_set_charset($link, 'utf8');
     }
     if ($prefecture === '') {
@@ -108,7 +94,7 @@ if (isset($_POST['prefecture']) && isset($_POST['city']) && isset($_POST['town']
     if (empty($error)) {
         $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE prefecture = "' . $prefecture . '" AND city = "' . $city . '" 
         AND town = "' . $town . '"';
-       
+
 
         $result = mysqli_query($link, $query);
         while ($row = mysqli_fetch_array($result)) {
@@ -121,9 +107,6 @@ if (isset($_POST['prefecture']) && isset($_POST['city']) && isset($_POST['town']
         //接続に失敗した場合
     }
 }
-
-
-
 
 //郵便番号から都道府県・市町村を選択する仕様
 if (isset($_POST['post_code'])) {
@@ -188,9 +171,14 @@ if (isset($_POST['post_code'])) {
 
 <body>
     <h1>郵便番号検索</h1>
+
+    <?php foreach ($error as $value) { ?>
+        <p><?php print $value; ?></p>
+    <?php } ?>
+
     <h2>郵便番号から検索</h2>
     <form method="POST">
-        <p><input type="text" name="post_code">
+        <p><input type="text" name="post_code" value="例)1010001">
             <input type="submit" value="検索">
         </p>
     </form>
@@ -206,20 +194,15 @@ if (isset($_POST['post_code'])) {
                 }
                 ?>
             </select>
-            市 <input type="text" name="city">
-            町村<input type="text" name="town"><input type="submit" value="検索"></p>
+            市区町村 <input type="text" name="city_town">
+            <input type="submit" value="検索"></p>
     </form>
 
     <!-- ここに検索結果を反映させる -->
-    <?php foreach ($error as $value) { ?>
-        <p><?php print $value; ?></p>
-    <?php } ?>
     <table>
         <tr>
             <th>郵便番号</th>
-            <th>県</th>
-            <th>市</th>
-            <th>町</th>
+            <th>住所</th>
         </tr>
 
         <?php
@@ -227,23 +210,16 @@ if (isset($_POST['post_code'])) {
         ?>
             <tr>
                 <td><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['prefecture'] . $value['city'] . $value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
         <?php  } ?>
-
-
-
 
         <?php
         foreach ($post_code_data as $value) {
         ?>
             <tr>
                 <td><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['prefecture'] . $value['city'] . $value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
 
         <?php  } ?>

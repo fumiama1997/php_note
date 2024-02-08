@@ -1,9 +1,8 @@
 <?php
 $goods_data = [];
 $error = [];
-$name = '';
-$price = '';
 $insert = '';
+
 $host = 'localhost'; // データベースのホスト名又はIPアドレス
 $username = 'root';  // MySQLのユーザ名
 $passwd   = 'narait';    // MySQLのパスワード
@@ -28,21 +27,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price = $_POST['price'];
 
     if ($name === '') {
-        $error['name'] = '商品名を入力してください';
+        $error['name'] = 'エラー';
     }
     if ($price === '') {
-        $error['price'] = '価格を入力してください';
+        $error['price'] = 'エラー';
     } else if (is_numeric($price) === FALSE) {
-        $error['int'] = '価格には半角数字を入れてください';
+        $error['int'] = 'エラー';
     }
 
     if (empty($error)) {
-        //ここの書き方が分からない
         $query =  'INSERT INTO goods_table (goods_name, price) VALUES ("' . $name . '",' . $price . ')';
 
-        //追加 クエリを実行します  
         $result = mysqli_query($link, $query);
 
+        //どのタイミングで追加成功を入れればいいか
         $insert = '追加成功';
 
         $query = 'SELECT goods_name,price FROM goods_table';
@@ -104,13 +102,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <th>価格</th>
         </tr>
         <?php
-        foreach ($goods_alldata as $value) {
+        if (empty($goods_data)) {
+            foreach ($goods_alldata as $value) {
         ?>
-            <tr>
-                <td><?php print htmlspecialchars($value['goods_name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?></td>
-            </tr>
+                <tr>
+                    <td><?php print htmlspecialchars($value['goods_name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
         <?php
+            }
         }
         ?>
 

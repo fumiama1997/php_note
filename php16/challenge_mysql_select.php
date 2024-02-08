@@ -35,15 +35,14 @@ if (isset($_POST['job']) === TRUE) {
         print 'DB接続失敗';
     }
 
-    // クエリを実行します  
     $result = mysqli_query($link, $query);
 
     while ($row = mysqli_fetch_array($result)) {
         $emp_data[] = $row;
     }
-    // 結果セットを開放します
+
     mysqli_free_result($result);
-    // 接続を閉じます
+
     mysqli_close($link);
 }
 ?>
@@ -60,7 +59,6 @@ if (isset($_POST['job']) === TRUE) {
         th {
             border: solid black 1px;
         }
-
         table {
             width: 500px;
         }
