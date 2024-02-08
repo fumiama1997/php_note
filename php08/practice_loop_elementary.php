@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['number'])) {
     $number = $_POST['number'];
     for ($i = 0; $i < $number; $i++) {
         $array_rnd = array_rand($coin, 1);
-        if ($array_rnd == 't') {
+        if ($array_rnd === 't') {
             $coin['t']++;
         } else {
             $coin['b']++;

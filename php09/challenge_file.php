@@ -43,7 +43,7 @@ if (is_readable($filename) === TRUE) {
 <body>
     <h1>課題</h1>
     <form method="POST">
-        <p>発言:<input type="text" name="comment"><input type="submit" name="submit" value="送信"></p>
+        <p>発言:<input type="text" name="comment"> <input type="submit" name="submit" value="送信"> </p>
     </form>
     <p>発言一覧</p>
 
