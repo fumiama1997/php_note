@@ -10,7 +10,6 @@ if ($link) {
 
     mysqli_set_charset($link, 'utf8');
 }
-
 $query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
 
 $result = mysqli_query($link, $query);
@@ -22,17 +21,19 @@ while ($row = mysqli_fetch_array($result)) {
 if (isset($_POST['job']) === TRUE) {
 
     $job = $_POST['job'];
-
-    if ($job === 'all') {
-        $query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
-    } elseif ($job === 'manager') {
-        $query = 'SELECT emp_id,emp_name,job,age FROM emp_table WHERE job = "manager"';
-    } elseif ($job === 'analyst') {
-        $query = 'SELECT emp_id,emp_name,job,age FROM emp_table WHERE job = "analyst"';
-    } elseif ($job === 'clerk') {
-        $query = 'SELECT emp_id,emp_name,job,age FROM emp_table WHERE job = "clerk"';
-    } else {
-        print 'DB接続失敗';
+    switch ($job) {
+        case 'all':
+            $query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
+            break;
+        case 'manager':
+            $query = 'SELECT emp_id,emp_name,job,age FROM emp_table WHERE job = "manager"';
+            break;
+        case 'analyst':
+            $query = 'SELECT emp_id,emp_name,job,age FROM emp_table WHERE job = "analyst"';
+            break;
+        case 'clerk':
+            $query = 'SELECT emp_id,emp_name,job,age FROM emp_table WHERE job = "clerk"';
+            break;
     }
 
     $result = mysqli_query($link, $query);
@@ -59,6 +60,7 @@ if (isset($_POST['job']) === TRUE) {
         th {
             border: solid black 1px;
         }
+
         table {
             width: 500px;
         }
@@ -68,7 +70,7 @@ if (isset($_POST['job']) === TRUE) {
 <body>
     <p>表示する職種を選択してください。</p>
 
-    <form method="POST">
+    <form method="POST" action="./challenge_mysql_select.php">
         <select name="job">
             <option value="all">全員</option>
             <option value="manager">マネージャー</option>

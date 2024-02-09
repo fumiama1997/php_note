@@ -1,9 +1,6 @@
 <?php
-$nameLimit = '20';
-$commentLimit = '100';
 $error = [];
 $board_data = [];
-$goods_alldata = [];
 
 $host = 'localhost';
 $username = 'root';
@@ -27,21 +24,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $comment = $_POST['comment'];
     // 名前の入力チェック、20文字以内かをチェック
-    if ($_POST['name'] === '') {
-        $error['name'] = '名前を入力してください';
-    } else if (strlen($_POST['name']) > 20) {
-        $error['name'] = '名前は20文字以内で入力してください';
+    if ($name === '') {
+        $error[] = '名前を入力してください';
+    } else if (strlen($name) > 20) {
+        $error[] = '名前は20文字以内で入力してください';
     }
     // ひとことの入力チェック、100文字以内かをチェック
-    if ($_POST['comment'] === '') {
-        $error['comment'] = 'ひとことを入力してください';
-    } else if (mb_strlen($_POST['comment']) > 100) {
-        $error['comment'] = 'ひとことは100文字以内で入力してください';
+    if ($comment === '') {
+        $error[] = 'ひとことを入力してください';
+    } else if (mb_strlen($comment) > 100) {
+        $error[] = 'ひとことは100文字以内で入力してください';
     }
 
     // 正常処理
     if (empty($error)) {
-        $date = date('Y-m-d H:i:s');
+        $date = date('m月d日 H:i:s');
 
         $query = "INSERT INTO board_table(board_name,comment,datetime) VALUES
         ('$name','$comment','$date')";

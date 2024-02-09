@@ -10,15 +10,15 @@ $data = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 名前の入力チェック、20文字以内かをチェック
     if ($_POST['name'] === '') {
-        $error['name'] = '名前を入力してください';
+        $error[] = '名前を入力してください';
     } else if (strlen($_POST['name']) > 20) {
-        $error['name'] = '名前は20文字以内で入力してください';
+        $error[] = '名前は20文字以内で入力してください';
     }
     // ひとことの入力チェック、100文字以内かをチェック
     if ($_POST['comment'] === '') {
-        $error['comment'] = 'ひとことを入力してください';
+        $error[] = 'ひとことを入力してください';
     } else if (mb_strlen($_POST['comment']) > 100) {
-        $error['comment'] = 'ひとことは100文字以内で入力してください';
+        $error[] = 'ひとことは100文字以内で入力してください';
     }
 
     // 正常処理
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // ファイルへの書き込み
         if (($fp = fopen($filename, 'a')) !== FALSE) {
             if (fwrite($fp, $file_write_text) === FALSE) {
-                $error['filename'] = 'ファイル書き込み失敗:  ' . $filename;
+                $error[] = 'ファイル書き込み失敗:  ' . $filename;
             }
             fclose($fp);
         }

@@ -1,8 +1,3 @@
-<!-- メールアドレスとパスワードを入力し登録ボタンを押すと、入力された値に問題ないか確認し、問題なければ「登録完了」、それ以外はエラーメッセージを表示するページを作成してください。
-パスワードは半角英数字記号で6文字以上18文字以下のみ可能とします。
-また「未入力」と「入力はあるが値に問題がある」はそれぞれ異なるエラーメッセージを用意し表示してください。 -->
-
-
 <?php
 $regexp_mail   = '/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9_.+-]+.[a-zA-Z0-9_.+-]+$/';
 // パスワードは半角英数字記号で6文字以上18文字以下のみ可能とします
@@ -19,17 +14,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($mail === '') {
         $error[] = 'メールアドレスを入力してください<br>';
     } else if (preg_match($regexp_mail, $mail, $matches) === 0) {
-        $error[] = '正しくメールアドレスを入力してください<br>';
+        $error[] = 'メールアドレスの形式が正しくありません<br>';
     }
 
     //パスワードのバリデーション・正規表現
     if ($password === '') {
         $error[] = 'パスワードを入力してください<br>';
     } else if (preg_match($regexp_password, $password, $matches) === 0) {
-        $error[] = 'パスワードは半角英数字記号で6文字以上18文字以下で入力ください<br>';
+        $error[] = 'パスワードは半角英数字記号6文字以上18文字以下で入力してください<br>';
     }
     if (empty($error)) {
-        $success = '登録が成功しました';
+        $success = '登録完了';
     }
 }
 
@@ -45,21 +40,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <p>メールアドレス</p>
-    <form method="POST">
-        <input type="text" name="mail">
-        <p>パスワード</p>
-        <input type="password" name="password"><br>
-        <?php
-        print  $success;
 
+
+    <?php if (empty($success)) { ?>
+        <p>メールアドレス</p>
+        <form method="POST">
+            <input type="text" name="mail">
+            <p>パスワード</p>
+            <input type="password" name="password"><br>
+
+            <br>
+            <input type="submit" value="登録">
+
+        <?php }; ?>
+
+        <?php
+        print $success;
         foreach ($error as $value) {
             print '<br>' . $value;
         }
         ?>
-        <br>
-        <input type="submit" value="登録">
-    </form>
+        </form>
 
 
 </body>
