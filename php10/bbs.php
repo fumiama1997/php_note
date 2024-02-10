@@ -1,7 +1,5 @@
 <?php
 $filename = './challenge_log.txt';
-$comment = '';
-$name = '';
 $nameLimit = '20';
 $commentLimit = '100';
 $error = [];

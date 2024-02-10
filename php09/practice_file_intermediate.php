@@ -2,11 +2,12 @@
 
 <?php
 $filename = './zip_data_split_1.csv';
+$array = [];
 
-if (is_readable($filename) == TRUE) {
+if (is_readable($filename) === true) {
 
-    if (($fp = fopen($filename, 'r')) == TRUE) {
-        while (($tmp = fgets($fp)) == TRUE) {
+    if (($fp = fopen($filename, 'r')) !== false) {
+        while (($tmp = fgets($fp)) !== false) {
             //文字列内のダブルクォーテーションを取り除き変数へ
             $trim = str_replace('"', "", $tmp);
             //カンマ区切りで文字列を配列へ入れていく
@@ -72,10 +73,6 @@ if (is_readable($filename) == TRUE) {
                 <td><?php print $value[6]; ?></td>
             </tr>
         <?php }; ?>
-    </table>
-
-    ?>
-
     </table>
 
 
