@@ -27,16 +27,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $price = $_POST['price'];
 
     if ($name === '') {
-        $error['name'] = 'エラー';
+        $error[] = '名前を入力してください';
     }
     if ($price === '') {
-        $error['price'] = 'エラー';
+        $error[] = '価格を入力してください';
     } else if (is_numeric($price) === FALSE) {
-        $error['int'] = 'エラー';
+        $error[] = '価格は数字で入力してください';
     }
 
     if (empty($error)) {
-        $query =  'INSERT INTO goods_table (goods_name, price) VALUES ("' . $name . '",' . $price . ')';
+        $query =  'INSERT INTO goods_tabl (goods_name, price) VALUES ("' . $name . '",' . $price . ')';
 
         $result = mysqli_query($link, $query);
 

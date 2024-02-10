@@ -12,13 +12,6 @@ if ($link) {
     mysqli_set_charset($link, 'utf8');
 }
 
-$query = 'SELECT board_id,board_name,comment,datetime FROM board_table';
-$result = mysqli_query($link, $query);
-
-while ($row = mysqli_fetch_array($result)) {
-    $goods_alldata[] = $row;
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $name = $_POST['name'];
@@ -46,18 +39,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         print '追加成功';
 
-        $query = 'SELECT board_id,board_name,comment,datetime FROM board_table';
-        $result = mysqli_query($link, $query);
-
-        while ($row = mysqli_fetch_array($result)) {
-            $board_data[] = $row;
-        }
-        // 結果セットを開放します
-        mysqli_free_result($result);
-        // 接続を閉じます
-        mysqli_close($link);
+        
     }
 }
+
+
+$query = 'SELECT board_id,board_name,comment,datetime FROM board_table';
+$result = mysqli_query($link, $query);
+
+while ($row = mysqli_fetch_array($result)) {
+    $goods_alldata[] = $row;
+}
+// 結果セットを開放します
+mysqli_free_result($result);
+// 接続を閉じます
+mysqli_close($link);
 
 ?>
 <!DOCTYPE html>
@@ -80,19 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php } ?>
 
     <p>発言一覧</p>
-    <!-- ブラウザ初期状態 -->
-    <?php
-    if (empty($board_data)) {
-        foreach ($goods_alldata as $value) {
-    ?>
-            <p><?php print htmlspecialchars($value['board_name'], ENT_QUOTES, 'UTF-8'); ?>
-                <?php print htmlspecialchars($value['comment'], ENT_QUOTES, 'UTF-8'); ?>
-                <?php print htmlspecialchars($value['datetime'], ENT_QUOTES, 'UTF-8'); ?></p>
-    <?php
-        }
-    }
-    ?>
-    <!-- ひとこと投稿後 -->
+    
     <?php foreach ($board_data as $value) { ?>
         <p><?php print htmlspecialchars($value['board_name'], ENT_QUOTES, 'UTF-8'); ?>: <?php print htmlspecialchars($value['comment'], ENT_QUOTES, 'UTF-8'); ?>: <?php print htmlspecialchars($value['datetime'], ENT_QUOTES, 'UTF-8'); ?> </p>
     <?php  } ?>

@@ -72,8 +72,13 @@ if (isset($_POST['job']) === TRUE) {
 
     <form method="POST" action="./challenge_mysql_select.php">
         <select name="job">
-            <option value="all">全員</option>
-            <option value="manager">マネージャー</option>
+            
+            <?php if($_POST['job'] === 'all'){  ?>
+            <option value="all" selected>全員</option>
+            
+            <?php } ;?>
+            <option value="manager" >マネージャー</option>
+            <option value="manager" <?php if ($job === 'manager') { print 'selected';} ?>>マネージャー</option>
             <option value="analyst">アナリスト</option>
             <option value="clerk">一般職</option>
         </select>
