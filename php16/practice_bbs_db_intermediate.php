@@ -36,10 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query = "INSERT INTO board_table(board_name,comment,datetime) VALUES
         ('$name','$comment','$date')";
         $result = mysqli_query($link, $query);
-
-        print '追加成功';
-
-        
     }
 }
 
@@ -48,7 +44,7 @@ $query = 'SELECT board_id,board_name,comment,datetime FROM board_table';
 $result = mysqli_query($link, $query);
 
 while ($row = mysqli_fetch_array($result)) {
-    $goods_alldata[] = $row;
+    $board_data[] = $row;
 }
 // 結果セットを開放します
 mysqli_free_result($result);
@@ -76,9 +72,10 @@ mysqli_close($link);
     <?php } ?>
 
     <p>発言一覧</p>
-    
+
     <?php foreach ($board_data as $value) { ?>
-        <p><?php print htmlspecialchars($value['board_name'], ENT_QUOTES, 'UTF-8'); ?>: <?php print htmlspecialchars($value['comment'], ENT_QUOTES, 'UTF-8'); ?>: <?php print htmlspecialchars($value['datetime'], ENT_QUOTES, 'UTF-8'); ?> </p>
+        <p><?php print htmlspecialchars($value['board_name'], ENT_QUOTES, 'UTF-8'); ?>:
+            <?php print htmlspecialchars($value['comment'], ENT_QUOTES, 'UTF-8'); ?>: <?php print htmlspecialchars($value['datetime'], ENT_QUOTES, 'UTF-8'); ?> </p>
     <?php  } ?>
 </body>
 

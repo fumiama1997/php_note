@@ -3,25 +3,14 @@ $goods_data = [];
 $error = [];
 $insert = '';
 
-$host = 'localhost'; // データベースのホスト名又はIPアドレス
-$username = 'root';  // MySQLのユーザ名
-$passwd   = 'narait';    // MySQLのパスワード
-$dbname   = 'user';    // データベース名
+$host = 'localhost';
+$username = 'root';
+$passwd   = 'narait';
+$dbname   = 'user';
 $link = mysqli_connect($host, $username, $passwd, $dbname);
-
-// 接続成功した場合
 if ($link) {
-    // 文字化け防止
     mysqli_set_charset($link, 'utf8');
 }
-
-$query = 'SELECT goods_name,price FROM goods_table';
-$result = mysqli_query($link, $query);
-
-while ($row = mysqli_fetch_array($result)) {
-    $goods_alldata[] = $row;
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $price = $_POST['price'];
@@ -31,33 +20,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if ($price === '') {
         $error[] = '価格を入力してください';
+        
     } else if (is_numeric($price) === FALSE) {
         $error[] = '価格は数字で入力してください';
     }
 
     if (empty($error)) {
-        $query =  'INSERT INTO goods_tabl (goods_name, price) VALUES ("' . $name . '",' . $price . ')';
+        $query =  'INSERT INTO goods_table (goods_name, price) VALUES ("' . $name . '",' . $price . ')';
 
         $result = mysqli_query($link, $query);
 
-        //どのタイミングで追加成功を入れればいいか
-        $insert = '追加成功';
-
-        $query = 'SELECT goods_name,price FROM goods_table';
-
-        $result = mysqli_query($link, $query);
-
-        while ($row = mysqli_fetch_array($result)) {
-            $goods_data[] = $row;
+        if ($result === TRUE) {
+            $insert = '追加成功';
         }
-        // 結果セットを開放します
-        mysqli_free_result($result);
-        // 接続を閉じます
-        mysqli_close($link);
     } else {
         $insert = '追加失敗';
     }
 }
+
+$query = 'SELECT goods_name,price FROM goods_table';
+$result = mysqli_query($link, $query);
+
+while ($row = mysqli_fetch_array($result)) {
+    $goods_data[] = $row;
+}
+// 接続を閉じます
+mysqli_close($link);
 ?>
 
 <!DOCTYPE html>
@@ -101,20 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <th>商品名</th>
             <th>価格</th>
         </tr>
-        <?php
-        if (empty($goods_data)) {
-            foreach ($goods_alldata as $value) {
-        ?>
-                <tr>
-                    <td><?php print htmlspecialchars($value['goods_name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?></td>
-                </tr>
-        <?php
-            }
-        }
-        ?>
 
-        <!-- データベースに追加後のテーブル情報↓ -->
         <?php
         foreach ($goods_data as $value) {
         ?>

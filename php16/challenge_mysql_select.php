@@ -1,23 +1,14 @@
 <?php
+$job = '';
 $emp_data = [];
 $host = 'localhost';
 $username = 'root';
 $passwd   = 'narait';
 $dbname   = 'user';
 $link = mysqli_connect($host, $username, $passwd, $dbname);
-
 if ($link) {
-
     mysqli_set_charset($link, 'utf8');
 }
-$query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
-
-$result = mysqli_query($link, $query);
-
-while ($row = mysqli_fetch_array($result)) {
-    $emp_alldata[] = $row;
-}
-
 if (isset($_POST['job']) === TRUE) {
 
     $job = $_POST['job'];
@@ -43,9 +34,20 @@ if (isset($_POST['job']) === TRUE) {
     }
 
     mysqli_free_result($result);
-
-    mysqli_close($link);
 }
+
+if (empty($_POST)) {
+
+    $query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
+
+    $result = mysqli_query($link, $query);
+
+    while ($row = mysqli_fetch_array($result)) {
+        $emp_data[] = $row;
+    }
+}
+mysqli_close($link);
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -72,15 +74,16 @@ if (isset($_POST['job']) === TRUE) {
 
     <form method="POST" action="./challenge_mysql_select.php">
         <select name="job">
-            
-            <?php if($_POST['job'] === 'all'){  ?>
-            <option value="all" selected>全員</option>
-            
-            <?php } ;?>
-            <option value="manager" >マネージャー</option>
-            <option value="manager" <?php if ($job === 'manager') { print 'selected';} ?>>マネージャー</option>
-            <option value="analyst">アナリスト</option>
-            <option value="clerk">一般職</option>
+            <option value="all">全員</option>
+            <option value="manager" <?php if ($job === 'manager') {
+                                        print 'selected';
+                                    } ?>>マネージャー</option>
+            <option value="analyst" <?php if ($job === 'analyst') {
+                                        print 'selected';
+                                    } ?>>アナリスト</option>
+            <option value="clerk" <?php if ($job === 'clerk') {
+                                        print 'selected';
+                                    } ?>>一般職</option>
         </select>
         <input type="submit" value="表示">
     </form>
@@ -92,19 +95,6 @@ if (isset($_POST['job']) === TRUE) {
             <th>職種</th>
             <th>年齢</th>
         </tr>
-        <?php
-        if (empty($_POST)) foreach ($emp_alldata as $value) {
-        ?>
-            <tr>
-                <td><?php print htmlspecialchars($value['emp_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['emp_name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['job'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['age'], ENT_QUOTES, 'UTF-8'); ?></td>
-            </tr>
-        <?php
-        }
-        ?>
-
         <?php
         foreach ($emp_data as $value) {
         ?>
