@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 名前の入力チェック、20文字以内かをチェック
     if ($name === '') {
         $error[] = '名前を入力してください';
-    } else if (strlen($name) > 20) {
+    } else if (mb_strlen($name) > 20) {
         $error[] = '名前は20文字以内で入力してください';
     }
     // ひとことの入力チェック、100文字以内かをチェック
@@ -31,14 +31,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 正常処理
     if (empty($error)) {
-        $date = date('m月d日 H:i:s');
+        $date = date('y:m:d H:i:s');
 
         $query = "INSERT INTO board_table(board_name,comment,datetime) VALUES
         ('$name','$comment','$date')";
+
         $result = mysqli_query($link, $query);
     }
 }
-
 
 $query = 'SELECT board_id,board_name,comment,datetime FROM board_table';
 $result = mysqli_query($link, $query);
@@ -73,9 +73,26 @@ mysqli_close($link);
 
     <p>発言一覧</p>
 
+    <table>
+        <tr>
+            <th>名前</th>
+            <th>コメント</th>
+            <th>発言日時</th>
+        </tr>
+    </table>
+
+
+
+
     <?php foreach ($board_data as $value) { ?>
-        <p><?php print htmlspecialchars($value['board_name'], ENT_QUOTES, 'UTF-8'); ?>:
-            <?php print htmlspecialchars($value['comment'], ENT_QUOTES, 'UTF-8'); ?>: <?php print htmlspecialchars($value['datetime'], ENT_QUOTES, 'UTF-8'); ?> </p>
+        <p>
+            <?php print htmlspecialchars($value['board_name'], ENT_QUOTES, 'UTF-8'); ?>:
+            <?php print htmlspecialchars($value['comment'], ENT_QUOTES, 'UTF-8'); ?>:
+            <?php
+            $datetime = $value['datetime'];
+            $date_format = date('Y/m/d H:i:s', strtotime($datetime));
+            print htmlspecialchars($date_format, ENT_QUOTES, 'UTF-8'); ?>
+        </p>
     <?php  } ?>
 </body>
 
