@@ -12,14 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     //メールのバリデーション・正規表現
     if ($mail === '') {
-        $error[] = 'メールアドレスを入力してください<br>';
+        $error[] = 'メールアドレスが未入力です。<br>';
     } else if (preg_match($regexp_mail, $mail, $matches) === 0) {
         $error[] = 'メールアドレスの形式が正しくありません<br>';
     }
 
     //パスワードのバリデーション・正規表現
     if ($password === '') {
-        $error[] = 'パスワードを入力してください<br>';
+        $error[] = 'パスワードが未入力です。<br>';
     } else if (preg_match($regexp_password, $password, $matches) === 0) {
         $error[] = 'パスワードは半角英数字記号6文字以上18文字以下で入力してください<br>';
     }
@@ -40,20 +40,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-
-
+    <!-- //登録成功していない場合の表示 -->
     <?php if (empty($success)) { ?>
         <p>メールアドレス</p>
         <form method="POST">
             <input type="text" name="mail">
             <p>パスワード</p>
             <input type="password" name="password"><br>
-
             <br>
             <input type="submit" value="登録">
 
         <?php }; ?>
-
+        <!-- 登録成功した場合の表示 -->
         <?php
         print $success;
         foreach ($error as $value) {
