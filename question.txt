@@ -1,3 +1,9 @@
+php16-10/challenge_mysql_insert.php
+
+
+
+
+
 php16/practice_bbs_db_intermediate.php
 datetimeのフォーマット変更を行った。ブラウザ表示は問題なく行われているが、書いたコードより見やすくする方法はあるのか。
 
