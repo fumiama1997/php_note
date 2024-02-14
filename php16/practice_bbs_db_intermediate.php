@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $name = $_POST['name'];
     $comment = $_POST['comment'];
+
     // 名前の入力チェック、20文字以内かをチェック
     if ($name === '') {
         $error[] = '名前を入力してください';
@@ -46,9 +47,9 @@ $result = mysqli_query($link, $query);
 while ($row = mysqli_fetch_array($result)) {
     $board_data[] = $row;
 }
-// 結果セットを開放します
+
 mysqli_free_result($result);
-// 接続を閉じます
+
 mysqli_close($link);
 
 ?>
@@ -73,24 +74,13 @@ mysqli_close($link);
 
     <p>発言一覧</p>
 
-    <table>
-        <tr>
-            <th>名前</th>
-            <th>コメント</th>
-            <th>発言日時</th>
-        </tr>
-    </table>
-
-
-
-
     <?php foreach ($board_data as $value) { ?>
         <p>
             <?php print htmlspecialchars($value['board_name'], ENT_QUOTES, 'UTF-8'); ?>:
             <?php print htmlspecialchars($value['comment'], ENT_QUOTES, 'UTF-8'); ?>:
             <?php
             $datetime = $value['datetime'];
-            $date_format = date('Y/m/d H:i:s', strtotime($datetime));
+            $date_format = date('Y年m月d日 H:i:s', strtotime($datetime));
             print htmlspecialchars($date_format, ENT_QUOTES, 'UTF-8'); ?>
         </p>
     <?php  } ?>
