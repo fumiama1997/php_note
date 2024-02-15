@@ -56,7 +56,7 @@ $post_code_data = [];
 $regexp_prefecture =  '/^.*?[都道府県]$/';
 $regexp_city = '/^.*?[市区町村]$/';
 $result = '';
-
+$success = '';
 
 
 
@@ -85,13 +85,8 @@ if (isset($_POST['post_code'])) {
     }
     if (empty($error)) {
         $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE post_code = ' . $post_code . ' ';
-        // SELECT 'perfecture',city,town FROM zip_data_split_3 WHERE post_code = 6750145
-        //クエリを実行します
-        $result = mysqli_query($link, $query);
-        if ($result === TRUE) {
-            $insert = '成功';
-        }
 
+        $result = mysqli_query($link, $query);
 
         while ($row = mysqli_fetch_array($result)) {
             $post_data[] = $row;
@@ -100,7 +95,8 @@ if (isset($_POST['post_code'])) {
         mysqli_free_result($result);
         //接続を閉じます
         mysqli_close($link);
-        //接続に失敗した場合
+
+        $success = '成功';
     }
 }
 
@@ -138,10 +134,6 @@ if (isset($_POST['prefecture']) && isset($_POST['city'])) {
         $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE prefecture = "' . $prefecture . '" AND city = "' . $city . '"';
 
         $result = mysqli_query($link, $query);
-        
-        if ($result === TRUE) {
-            $insert = '成功';
-        }
 
         while ($row = mysqli_fetch_array($result)) {
             $post_code_data[] = $row;
@@ -150,7 +142,8 @@ if (isset($_POST['prefecture']) && isset($_POST['city'])) {
         mysqli_free_result($result);
         //接続を閉じます
         mysqli_close($link);
-        //接続に失敗した場合
+
+        $success = '成功';
     }
 }
 ?>
@@ -207,12 +200,12 @@ if (isset($_POST['prefecture']) && isset($_POST['city'])) {
     </form>
 
     <table>
-        <?php if ($result === '成功') { ?>
+        <?php if ($success === '成功') { ?>
             <tr>
                 <th>郵便番号</th>
                 <th>住所</th>
             </tr>
-        <?php }; ?>
+        <?php } ?>
         <?php
         foreach ($post_code_data as $value) {
         ?>
