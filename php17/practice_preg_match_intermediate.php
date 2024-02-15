@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="submit" value="登録">
 
         <?php }; ?>
-        <!-- 登録成功した場合の表示 -->
+
         <?php
         print $success;
         foreach ($error as $value) {

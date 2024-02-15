@@ -78,6 +78,7 @@ mysqli_close($link);
         <p>
             <?php print htmlspecialchars($value['board_name'], ENT_QUOTES, 'UTF-8'); ?>:
             <?php print htmlspecialchars($value['comment'], ENT_QUOTES, 'UTF-8'); ?>:
+            <!-- ここを確認してもらう。 -->
             <?php
             $datetime = $value['datetime'];
             $date_format = date('Y年m月d日 H:i:s', strtotime($datetime));
