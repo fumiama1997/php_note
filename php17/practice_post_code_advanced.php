@@ -56,14 +56,19 @@ $post_code_data = [];
 $regexp_prefecture =  '/^.*?[都道府県]$/';
 $regexp_city = '/^.*?[市区町村]$/';
 $result = '';
-$success = '';
+$assessment = '';
+
+
+
+
+
 
 
 
 
 //郵便番号から都道府県・市町村を表示する仕様
-if (isset($_POST['post_code'])) {
-    $post_code = $_POST['post_code'];
+if (isset($_GET['post_code'])) {
+    $post_code = $_GET['post_code'];
     $host = 'localhost'; // データベースのホスト名又はIPアドレス
     $username = 'root';  // MySQLのユーザ名
     $passwd   = 'narait';    // MySQLのパスワード
@@ -96,16 +101,18 @@ if (isset($_POST['post_code'])) {
         //接続を閉じます
         mysqli_close($link);
 
-        $success = '成功';
+        $assessment = '成功';
+    } else {
+        $assessment = '失敗';
     }
 }
 
 
 // 都道府県・市区町村から住所が検索できる仕様。
-if (isset($_POST['prefecture']) && isset($_POST['city'])) {
+if (isset($_GET['prefecture']) && isset($_GET['city'])) {
 
-    $prefecture = $_POST['prefecture'];
-    $city = $_POST['city'];
+    $prefecture = $_GET['prefecture'];
+    $city = $_GET['city'];
 
     $host = 'localhost'; // データベースのホスト名又はIPアドレス
     $username = 'root';  // MySQLのユーザ名
@@ -143,9 +150,15 @@ if (isset($_POST['prefecture']) && isset($_POST['city'])) {
         //接続を閉じます
         mysqli_close($link);
 
-        $success = '成功';
+        $assessment = '成功';
+    } else {
+        $assessment = '失敗';
     }
 }
+
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -176,13 +189,13 @@ if (isset($_POST['prefecture']) && isset($_POST['city'])) {
     <?php } ?>
 
     <h2>郵便番号から検索</h2>
-    <form method="POST">
+    <form method="get">
         <p><input type="text" name="post_code" placeholder="例)1010001">
             <input type="submit" value="検索">
         </p>
     </form>
     <h3>地名から検索</h3>
-    <form method="POST">
+    <form method="get">
         <p>都道府県を選択 <select name="prefecture">
                 <option hidden>都道府県を選択</option>
                 <?php
@@ -200,7 +213,8 @@ if (isset($_POST['prefecture']) && isset($_POST['city'])) {
     </form>
 
     <table>
-        <?php if ($success === '成功') { ?>
+        <!-- if (empty($error))実行され　$success = '成功'と代入されたときのみ -->
+        <?php if ($assessment === '成功') { ?>
             <tr>
                 <th>郵便番号</th>
                 <th>住所</th>
@@ -226,7 +240,7 @@ if (isset($_POST['prefecture']) && isset($_POST['city'])) {
         <?php  } ?>
     </table>
 
-    <?php if (empty($_POST)) { ?>
+    <?php if (empty($assessment)) {; ?>
         <p>ここに検索結果が表示されます</p>
     <?php }; ?>
 </body>

@@ -20,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if ($price === '') {
         $error[] = '価格を入力してください';
-        
     } else if (is_numeric($price) === FALSE) {
         $error[] = '価格は数字で入力してください';
     }
@@ -71,12 +70,10 @@ mysqli_close($link);
 <body>
     <!-- 結果を表示 -->
     <p><?php print $insert; ?></p>
-
-    <?php if (empty($_POST)) { ?>
+    <?php if (empty($_POST)) {?>
         <p>追加したい商品と価格を入力してください</p>
     <?php
     }
-
     ?>
 
     <form method="POST">

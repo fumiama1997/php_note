@@ -47,17 +47,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="text" name="mail">
             <p>パスワード</p>
             <input type="password" name="password"><br>
-            <br>
+            <?php
+
+            foreach ($error as $value) {
+                print '<br>' . $value;
+            }
+            ?><br>
             <input type="submit" value="登録">
 
-        <?php }; ?>
-
-        <?php
-        print $success;
-        foreach ($error as $value) {
-            print '<br>' . $value;
-        }
-        ?>
+        <?php }
+    print $success; ?>
         </form>
 
 
