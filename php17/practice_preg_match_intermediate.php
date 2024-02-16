@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <!-- //登録成功していない場合の表示 -->
-    <?php if (empty($success)) { ?>
+    <?php if (empty($assessment)) { ?>
         <p>メールアドレス</p>
         <form method="POST">
             <input type="text" name="mail">
@@ -54,10 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             ?><br>
             <input type="submit" value="登録">
-
-        <?php }
-    print $assessment; ?>
         </form>
+    <?php }
+    print $assessment; ?>
+
 
 
 </body>
