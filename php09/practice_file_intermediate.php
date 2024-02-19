@@ -7,11 +7,9 @@ $array = [];
 if (is_readable($filename) === true) {
 
     if (($fp = fopen($filename, 'r')) !== false) {
-        while (($tmp = fgets($fp)) !== false) {
-            //文字列内のダブルクォーテーションを取り除き変数へ
-            $trim = str_replace('"', "", $tmp);
-            //カンマ区切りで文字列を配列へ入れていく
-            $array[] = explode(',', $trim);
+        while (($tmp = fgetcsv($fp)) !== false) {
+
+            $array[] = $tmp;
         }
         fclose($fp);
     }

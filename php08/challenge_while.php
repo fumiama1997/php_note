@@ -2,6 +2,15 @@
 
 $data = 0;
 
+$i = 1;
+
+while ($data <= 1000) {
+    $data = $data + $i;
+    $i++;
+}
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -15,17 +24,8 @@ $data = 0;
 
 <body>
 
-    <?php
-    $i = 1;
-    while ($data <= 1000) {
-        $data = $data + $i;
-        if ($data >= 1000) {
-            print $i . '<br>' . $data;
-        }
-        $i++;
-    }
+    <p><?php print  $i ?><br><?php print $data ?></p>
 
-    ?>
 </body>
 
 </html>
