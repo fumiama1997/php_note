@@ -26,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($error)) {
         $query =  'INSERT INTO goods_table (goods_name, price) VALUES ("' . $name . '",' . $price . ')';
-
         $result = mysqli_query($link, $query);
 
         if ($result === TRUE) {
@@ -36,14 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insert = '追加失敗';
     }
 }
-
 $query = 'SELECT goods_name,price FROM goods_table';
 $result = mysqli_query($link, $query);
-
 while ($row = mysqli_fetch_array($result)) {
     $goods_data[] = $row;
 }
-// 接続を閉じます
+mysqli_free_result($result);
 mysqli_close($link);
 ?>
 
@@ -70,23 +67,20 @@ mysqli_close($link);
 <body>
     <!-- 結果を表示 -->
     <p><?php print $insert; ?></p>
-    <?php if (empty($_POST)) {?>
+    <?php if (empty($_POST)) { ?>
         <p>追加したい商品と価格を入力してください</p>
     <?php
     }
     ?>
-
     <form method="POST">
         <p>商品名: <input type="text" name="name"> 価格:<input type="text" name="price"> <input type="submit" value="追加"></p>
     </form>
-
     <p>商品一覧</p>
     <table>
         <tr>
             <th>商品名</th>
             <th>価格</th>
         </tr>
-
         <?php
         foreach ($goods_data as $value) {
         ?>
@@ -97,8 +91,6 @@ mysqli_close($link);
         <?php
         }
         ?>
-
-
     </table>
 </body>
 

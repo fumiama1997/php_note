@@ -10,7 +10,6 @@ if ($link) {
     mysqli_set_charset($link, 'utf8');
 }
 if (isset($_POST['job']) === TRUE) {
-
     $job = $_POST['job'];
     switch ($job) {
         case 'all':
@@ -26,28 +25,16 @@ if (isset($_POST['job']) === TRUE) {
             $query = 'SELECT emp_id,emp_name,job,age FROM emp_table WHERE job = "clerk"';
             break;
     }
-
-    $result = mysqli_query($link, $query);
-
-    while ($row = mysqli_fetch_array($result)) {
-        $emp_data[] = $row;
-    }
-
-    mysqli_free_result($result);
 }
-
 if (empty($_POST)) {
-
     $query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
-
-    $result = mysqli_query($link, $query);
-
-    while ($row = mysqli_fetch_array($result)) {
-        $emp_data[] = $row;
-    }
 }
+$result = mysqli_query($link, $query);
+while ($row = mysqli_fetch_array($result)) {
+    $emp_data[] = $row;
+}
+mysqli_free_result($result);
 mysqli_close($link);
-
 ?>
 <!DOCTYPE html>
 <html lang="ja">

@@ -57,6 +57,9 @@ $regexp_city = '/^.*?[市区町村]$/';
 $result = '';
 $assessment = '';
 $query = '';
+$prefecture = '';
+$city = '';
+$town = '';
 
 $host = 'localhost'; // データベースのホスト名又はIPアドレス
 $username = 'root';  // MySQLのユーザ名
@@ -80,15 +83,6 @@ if (isset($_GET['post_code'])) {
     } else if (preg_match($regexp_post_code, $post_code, $macths) === 0) {
         $error[] = '7桁の数値のみ入力してください';
     }
-    if (empty($error)) {
-        $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE post_code = ' . $post_code . ' ';
-        $result = mysqli_query($link, $query);
-        while ($row = mysqli_fetch_array($result)) {
-            $post_code_data[] = $row;
-        }
-        //結果セットを開放します
-        mysqli_free_result($result);
-    }
 }
 
 // 都道府県・市区町村から住所が検索できる仕様。
@@ -108,28 +102,18 @@ if (isset($_GET['prefecture']) && isset($_GET['city'])) {
     } else if (preg_match($regexp_city, $city, $macths) === 0) {
         $error[] = '市区町村名を正しく入力ください';
     }
-
-    if (empty($error)) {
-        $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE prefecture = "' . $prefecture . '" AND city = "' . $city . '"';
-        $result = mysqli_query($link, $query);
-        while ($row = mysqli_fetch_array($result)) {
-            $post_code_data[] = $row;
-        }
-        //結果セットを開放します
-        mysqli_free_result($result);
-    }
 }
-
-
-//接続を閉じます
+if (empty($error)) {
+    $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE prefecture = "' . $prefecture . '" AND city = "' . $city .
+        '" OR post_code = "' . $post_code . '"';
+    $result = mysqli_query($link, $query);
+    while ($row = mysqli_fetch_array($result)) {
+        $post_code_data[] = $row;
+    }
+    mysqli_free_result($result);
+}
 mysqli_close($link);
-
-
-
-
-
 ?>
-
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -158,6 +142,7 @@ mysqli_close($link);
     <?php } ?>
 
     <h2>郵便番号から検索</h2>
+
     <form method="get">
         <p><input type="text" name="post_code" placeholder="例)1010001">
             <input type="submit" value="検索">
@@ -185,7 +170,9 @@ mysqli_close($link);
         <?php if (empty($post_code_data) === false) { ?>
             <tr>
                 <th>郵便番号</th>
-                <th>住所</th>
+                <th>都道府県</th>
+                <th>市区町村</th>
+                <th>町域</th>
             </tr>
         <?php } ?>
         <?php
@@ -193,13 +180,12 @@ mysqli_close($link);
         ?>
             <tr>
                 <td><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['prefecture'] . $value['city'] . $value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
-
         <?php  } ?>
-
     </table>
-
     <?php if (empty($post_code_data)) {; ?>
         <p>ここに検索結果が表示されます</p>
     <?php }; ?>
