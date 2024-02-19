@@ -2,7 +2,7 @@
 $regexp_mail   = '/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9_.+-]+.[a-zA-Z0-9_.+-]+$/';
 // パスワードは半角英数字記号で6文字以上18文字以下のみ可能とします
 $regexp_password = '/^[a-z0-9.\/?%&=]{6,18}$/';
-$msg = [];
+
 $error = [];
 $assessment = '';
 
@@ -40,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <!-- //登録成功していない場合の表示 -->
     <?php if (empty($assessment)) { ?>
         <p>メールアドレス</p>
         <form method="POST">
@@ -48,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <p>パスワード</p>
             <input type="password" name="password"><br>
             <?php
-
             foreach ($error as $value) {
                 print '<br>' . $value;
             }
