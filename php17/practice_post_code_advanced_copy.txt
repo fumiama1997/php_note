@@ -104,20 +104,9 @@ if (isset($_GET['prefecture']) && isset($_GET['city'])) {
     }
 }
 if (empty($error)) {
-    // ページング設定
-    $perPage = 10;
-    $page = isset($_GET['page']) ? $_GET['page'] : 1;
-    $offset = ($page - 1) * $perPage;
-
-    // データの取得
     $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE prefecture = "' . $prefecture . '" AND city = "' . $city .
-        '" OR post_code = "' . $post_code . '"  LIMIT ' . $perPage . ' OFFSET ' . $offset . '';
+        '" OR post_code = "' . $post_code . '"';
     $result = mysqli_query($link, $query);
-    if (!$result) {
-        throw new Exception('<span style="color:red;"><b>Error:</b></span> Query Failed: ' . mysqli_error($conn));
-    }
-
-    // データの表示
     while ($row = mysqli_fetch_array($result)) {
         $post_code_data[] = $row;
     }
