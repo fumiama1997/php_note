@@ -1,4 +1,6 @@
 <?php
+
+
 $areas = [
     '北海道',
     '青森県',
@@ -60,6 +62,11 @@ $query = '';
 $prefecture = '';
 $city = '';
 $town = '';
+$all_data = [];
+$start = 0;
+$view_page = [];
+$page = 0;
+$max_page = 0;
 
 $host = 'localhost'; // データベースのホスト名又はIPアドレス
 $username = 'root';  // MySQLのユーザ名
@@ -104,23 +111,36 @@ if (isset($_GET['prefecture']) && isset($_GET['city'])) {
     }
 }
 if (empty($error)) {
-    // ページング設定
-    $perPage = 10;
-    $page = isset($_GET['page']) ? $_GET['page'] : 1;
-    $offset = ($page - 1) * $perPage;
 
-    // データの取得
+    // 1ページに表示する件数を指定
+    $max = 10;
+
+    // 必要なデータをすべて取得
     $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE prefecture = "' . $prefecture . '" AND city = "' . $city .
-        '" OR post_code = "' . $post_code . '"  LIMIT ' . $perPage . ' OFFSET ' . $offset . '';
+        '" OR post_code = "' . $post_code . '"';
     $result = mysqli_query($link, $query);
-    if (!$result) {
-        throw new Exception('<span style="color:red;"><b>Error:</b></span> Query Failed: ' . mysqli_error($conn));
-    }
 
-    // データの表示
+
+    // データを配列に入れる。
     while ($row = mysqli_fetch_array($result)) {
         $post_code_data[] = $row;
     }
+    //コンテンツの総数を求めて必要なページ数を求める。
+    $contents_sum = count($post_code_data);
+    $max_page = ceil($contents_sum / $max);
+
+    //現在いるページのページ番号を取得
+    if (!isset($_GET['page'])) {
+        $page = 1;
+    } else {
+        $page = $_GET['page'];
+    }
+
+    //スタートするページを取得
+    $start = $max * ($page - 1);
+
+    //表示するページを取得
+    $view_page = array_slice($post_code_data, $start, $max, true);
 
     mysqli_free_result($result);
 }
@@ -161,6 +181,7 @@ mysqli_close($link);
         </p>
     </form>
     <h3>地名から検索</h3>
+
     <form method="get">
         <p>都道府県を選択 <select name="prefecture">
                 <option hidden>都道府県を選択</option>
@@ -174,30 +195,42 @@ mysqli_close($link);
                 ?>
             </select>
             市区町村 <input type="text" name="city">
+
             <input type="submit" value="検索">
         </p>
-    </form>
+        <hr>
 
-    <table>
-        <?php if (empty($post_code_data) === false) { ?>
-            <tr>
-                <th>郵便番号</th>
-                <th>都道府県</th>
-                <th>市区町村</th>
-                <th>町域</th>
-            </tr>
-        <?php } ?>
-        <?php
-        foreach ($post_code_data as $value) {
-        ?>
-            <tr>
-                <td><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
-            </tr>
-        <?php  } ?>
-    </table>
+        <table>
+            <?php if (empty($post_code_data) === false) { ?>
+                <p>検索結果<?php print  $contents_sum; ?>件</p>
+                <p>郵便番号検索結果</p>
+                <tr>
+                    <th>郵便番号</th>
+                    <th>都道府県</th>
+                    <th>市区町村</th>
+                    <th>町域</th>
+                </tr>
+            <?php } ?>
+            <?php
+            foreach ($view_page as $value) {
+            ?>
+                <tr>
+                    <td><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+            <?php  } ?>
+
+        </table>
+        <?php if ($page > 1) { ?>
+            <a href="practice_post_code_advanced.php?prefecture=<?php print $prefecture; ?>&city=<?php print $city; ?>&page=<?php print($page - 1); ?>">前のページ</a>
+        <?php }; ?>
+        <?php if ($page < $max_page) { ?>
+            <a href="practice_post_code_advanced.php?prefecture=<?php print $prefecture; ?>&city=<?php print $city; ?>&page=<?php print($page + 1); ?>">次のページ</a>
+        <?php }; ?>
+        
+    </form>
     <?php if (empty($post_code_data)) {; ?>
         <p>ここに検索結果が表示されます</p>
     <?php }; ?>
