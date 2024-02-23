@@ -59,7 +59,7 @@ mysqli_close($link);
 <body>
     <p>表示する職種を選択してください。</p>
 
-    <form method="POST" action="./challenge_mysql_select.php">
+    <form method="POST">
         <select name="job">
             <option value="all">全員</option>
             <option value="manager" <?php if ($job === 'manager') {

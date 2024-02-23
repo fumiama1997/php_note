@@ -54,8 +54,8 @@ $post_code = '';
 $regexp_post_code =  '/^[0-9]{7}$/';
 $error = [];
 $post_code_data = [];
-$regexp_prefecture =  '/^.*?[都道府県]$/';
-$regexp_city = '/^.*?[市区町村]$/';
+$regexp_prefecture =  '/^.+[都道府県]$/';
+$regexp_city = '/^.+[市区町村]$/';
 $result = '';
 $assessment = '';
 $query = '';
@@ -120,7 +120,6 @@ if (empty($error)) {
         '" OR post_code = "' . $post_code . '"';
     $result = mysqli_query($link, $query);
 
-
     // データを配列に入れる。
     while ($row = mysqli_fetch_array($result)) {
         $post_code_data[] = $row;
@@ -139,7 +138,7 @@ if (empty($error)) {
     //スタートするページを取得
     $start = $max * ($page - 1);
 
-    //表示するページを取得
+    //取得した全データから必要な分だけ取り出す。
     $view_page = array_slice($post_code_data, $start, $max, true);
 
     mysqli_free_result($result);
@@ -198,39 +197,40 @@ mysqli_close($link);
 
             <input type="submit" value="検索">
         </p>
-        <hr>
-
-        <table>
-            <?php if (empty($post_code_data) === false) { ?>
-                <p>検索結果<?php print  $contents_sum; ?>件</p>
-                <p>郵便番号検索結果</p>
-                <tr>
-                    <th>郵便番号</th>
-                    <th>都道府県</th>
-                    <th>市区町村</th>
-                    <th>町域</th>
-                </tr>
-            <?php } ?>
-            <?php
-            foreach ($view_page as $value) {
-            ?>
-                <tr>
-                    <td><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
-                </tr>
-            <?php  } ?>
-
-        </table>
-        <?php if ($page > 1) { ?>
-            <a href="practice_post_code_advanced.php?prefecture=<?php print $prefecture; ?>&city=<?php print $city; ?>&page=<?php print($page - 1); ?>">前のページ</a>
-        <?php }; ?>
-        <?php if ($page < $max_page) { ?>
-            <a href="practice_post_code_advanced.php?prefecture=<?php print $prefecture; ?>&city=<?php print $city; ?>&page=<?php print($page + 1); ?>">次のページ</a>
-        <?php }; ?>
-        
     </form>
+    <hr>
+
+    <table>
+        <?php if (empty($post_code_data) === false) { ?>
+            <p>検索結果<?php print  $contents_sum; ?>件</p>
+            <p>郵便番号検索結果</p>
+            <tr>
+                <th>郵便番号</th>
+                <th>都道府県</th>
+                <th>市区町村</th>
+                <th>町域</th>
+            </tr>
+        <?php } ?>
+        <?php
+        foreach ($view_page as $value) {
+        ?>
+            <tr>
+                <td><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
+            </tr>
+        <?php  } ?>
+
+    </table>
+    <?php if ($page > 1) { ?>
+        <a href="practice_post_code_advanced.php?prefecture=<?php print $prefecture; ?>&city=<?php print $city; ?>&page=<?php print($page - 1); ?>">前のページ</a>
+    <?php }; ?>
+    <?php if ($page < $max_page) { ?>
+        <a href="practice_post_code_advanced.php?prefecture=<?php print $prefecture; ?>&city=<?php print $city; ?>&page=<?php print($page + 1); ?>">次のページ</a>
+    <?php }; ?>
+
+
     <?php if (empty($post_code_data)) {; ?>
         <p>ここに検索結果が表示されます</p>
     <?php }; ?>

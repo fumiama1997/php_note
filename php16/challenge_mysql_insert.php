@@ -11,6 +11,8 @@ $link = mysqli_connect($host, $username, $passwd, $dbname);
 if ($link) {
     mysqli_set_charset($link, 'utf8');
 }
+
+// ブラウザからのリクエストが、POSTメソッドなのか判別
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $price = $_POST['price'];
@@ -20,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if ($price === '') {
         $error[] = '価格を入力してください';
+        // 変数が数字または数値形式の文字列であるかを調べる
     } else if (is_numeric($price) === FALSE) {
         $error[] = '価格は数字で入力してください';
     }
