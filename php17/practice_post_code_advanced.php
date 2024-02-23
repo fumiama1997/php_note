@@ -54,7 +54,6 @@ $post_code = '';
 $regexp_post_code =  '/^[0-9]{7}$/';
 $error = [];
 $post_code_data = [];
-$regexp_prefecture =  '/^.+[都道府県]$/';
 $regexp_city = '/^.+[市区町村]$/';
 $result = '';
 $assessment = '';
@@ -67,6 +66,7 @@ $start = 0;
 $view_page = [];
 $page = 0;
 $max_page = 0;
+$contents_sum = 0;
 
 $host = 'localhost'; // データベースのホスト名又はIPアドレス
 $username = 'root';  // MySQLのユーザ名
@@ -88,7 +88,7 @@ if (isset($_GET['post_code'])) {
     if ($post_code === '') {
         $error[] = '郵便番号を入力してください<br>';
     } else if (preg_match($regexp_post_code, $post_code, $macths) === 0) {
-        $error[] = '7桁の数値のみ入力してください';
+        $error[] = '郵便番号は7桁の数値のみ入力してください';
     }
 }
 
@@ -98,16 +98,12 @@ if (isset($_GET['prefecture']) && isset($_GET['city'])) {
     $city = $_GET['city'];
     $city = str_replace(array(" ", "　"), "", $city);
 
-    if ($prefecture === '') {
-        $error[] = '都道府県名を入力してください<br>';
-    } else if (preg_match($regexp_prefecture, $prefecture, $macths) === 0) {
-        $error[] = '都道府県名を正しく入力ください';
-    }
-
-    if ($city === '') {
-        $error[] = '市区町村名を入力してください';
+    if ($prefecture === '都道府県を選択') {
+        $error[] = '都道府県を選択してください<br>';
+    } else if ($city === '') {
+        $error[] = '市区町村を入力してください';
     } else if (preg_match($regexp_city, $city, $macths) === 0) {
-        $error[] = '市区町村名を正しく入力ください';
+        $error[] = '市区町村を正しく入力ください';
     }
 }
 if (empty($error)) {
@@ -124,10 +120,11 @@ if (empty($error)) {
     while ($row = mysqli_fetch_array($result)) {
         $post_code_data[] = $row;
     }
+
     //コンテンツの総数を求めて必要なページ数を求める。
     $contents_sum = count($post_code_data);
-    $max_page = ceil($contents_sum / $max);
 
+    $max_page = ceil($contents_sum / $max);
     //現在いるページのページ番号を取得
     if (!isset($_GET['page'])) {
         $page = 1;
@@ -140,10 +137,10 @@ if (empty($error)) {
 
     //取得した全データから必要な分だけ取り出す。
     $view_page = array_slice($post_code_data, $start, $max, true);
-
     mysqli_free_result($result);
+    mysqli_close($link);
 }
-mysqli_close($link);
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -168,9 +165,7 @@ mysqli_close($link);
 <body>
     <h1>郵便番号検索</h1>
 
-    <?php foreach ($error as $value) { ?>
-        <p><?php print $value; ?></p>
-    <?php } ?>
+
 
     <h2>郵便番号から検索</h2>
 
@@ -183,25 +178,25 @@ mysqli_close($link);
 
     <form method="get">
         <p>都道府県を選択 <select name="prefecture">
-                <option hidden>都道府県を選択</option>
+                <option>都道府県を選択</option>
                 <?php
                 // 都道府県の配列をループさせる
                 foreach ($areas as $area) {
                 ?>
-                    <option><?php print $area; ?></option>
+                    <option value="<?php print $area; ?>" <?php if ($prefecture === $area) {
+                                                                print 'selected';
+                                                            } ?>><?php print $area; ?></option>
                 <?php
                 }
                 ?>
             </select>
-            市区町村 <input type="text" name="city">
-
+            市区町村 <input type="text" name="city" value="<?php print $city; ?>">
             <input type="submit" value="検索">
         </p>
     </form>
     <hr>
-
-    <table>
-        <?php if (empty($post_code_data) === false) { ?>
+    <?php if (empty($post_code_data) === false) { ?>
+        <table>
             <p>検索結果<?php print  $contents_sum; ?>件</p>
             <p>郵便番号検索結果</p>
             <tr>
@@ -210,6 +205,9 @@ mysqli_close($link);
                 <th>市区町村</th>
                 <th>町域</th>
             </tr>
+        <?php } ?>
+        <?php if (empty($error) && empty($post_code_data) && ((isset($_GET['prefecture']) && isset($_GET['city'])) or isset($_GET['post_code']))) { ?>
+            <p>検索結果 0件</p>
         <?php } ?>
         <?php
         foreach ($view_page as $value) {
@@ -220,20 +218,24 @@ mysqli_close($link);
                 <td><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
+
         <?php  } ?>
+        </table>
+        <?php if ($page > 1) { ?>
+            <a href="practice_post_code_advanced.php?prefecture=<?php print $prefecture; ?>&city=<?php print $city; ?>&page=<?php print($page - 1); ?>">前のページ</a>
+        <?php }; ?>
+        <?php if ($page < $max_page) { ?>
+            <a href="practice_post_code_advanced.php?prefecture=<?php print $prefecture; ?>&city=<?php print $city; ?>&page=<?php print($page + 1); ?>">次のページ</a>
+        <?php }; ?>
 
-    </table>
-    <?php if ($page > 1) { ?>
-        <a href="practice_post_code_advanced.php?prefecture=<?php print $prefecture; ?>&city=<?php print $city; ?>&page=<?php print($page - 1); ?>">前のページ</a>
-    <?php }; ?>
-    <?php if ($page < $max_page) { ?>
-        <a href="practice_post_code_advanced.php?prefecture=<?php print $prefecture; ?>&city=<?php print $city; ?>&page=<?php print($page + 1); ?>">次のページ</a>
-    <?php }; ?>
 
+        <?php if (empty($error) === false) {; ?>
+            <p>ここに検索結果が表示されます</p>
+        <?php }; ?>
 
-    <?php if (empty($post_code_data)) {; ?>
-        <p>ここに検索結果が表示されます</p>
-    <?php }; ?>
+        <?php foreach ($error as $value) { ?>
+            <p><?php print $value; ?></p>
+        <?php } ?>
 </body>
 
 </html>
