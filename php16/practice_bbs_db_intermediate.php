@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Tokyo');
 $error = [];
 $board_data = [];
 
@@ -9,40 +10,40 @@ $dbname   = 'user';
 $link = mysqli_connect($host, $username, $passwd, $dbname);
 if ($link) {
     mysqli_set_charset($link, 'utf8');
-}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'];
-    $comment = $_POST['comment'];
-    // 名前の入力チェック、20文字以内かをチェック
-    if ($name === '') {
-        $error[] = '名前を入力してください';
-    } else if (mb_strlen($name) > 20) {
-        $error[] = '名前は20文字以内で入力してください';
-    }
-    // ひとことの入力チェック、100文字以内かをチェック
-    if ($comment === '') {
-        $error[] = 'ひとことを入力してください';
-    } else if (mb_strlen($comment) > 100) {
-        $error[] = 'ひとことは100文字以内で入力してください';
-    }
-    // 正常処理
-    if (empty($error)) {
-        date_default_timezone_set('Asia/Tokyo');
-        $date = date('y:m:d H:i:s');
-        $query = "INSERT INTO board_table(board_name,comment,datetime) VALUES
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $name = $_POST['name'];
+        $comment = $_POST['comment'];
+        // 名前の入力チェック、20文字以内かをチェック
+        if ($name === '') {
+            $error[] = '名前を入力してください';
+        } else if (mb_strlen($name) > 20) {
+            $error[] = '名前は20文字以内で入力してください';
+        }
+        // ひとことの入力チェック、100文字以内かをチェック
+        if ($comment === '') {
+            $error[] = 'ひとことを入力してください';
+        } else if (mb_strlen($comment) > 100) {
+            $error[] = 'ひとことは100文字以内で入力してください';
+        }
+        // 正常処理
+        if (empty($error)) {
+            $date = date('y:m:d H:i:s');
+            $query = "INSERT INTO board_table(board_name,comment,datetime) VALUES
         ('$name','$comment','$date')";
-        $result = mysqli_query($link, $query);
+            $result = mysqli_query($link, $query);
+        }
     }
-}
 
-$query = 'SELECT board_id,board_name,comment,datetime FROM board_table';
-$result = mysqli_query($link, $query);
-while ($row = mysqli_fetch_array($result)) {
-    $board_data[] = $row;
+    $query = 'SELECT board_id,board_name,comment,datetime FROM board_table';
+    $result = mysqli_query($link, $query);
+    while ($row = mysqli_fetch_array($result)) {
+        $board_data[] = $row;
+    }
+    mysqli_free_result($result);
+    mysqli_close($link);
 }
-mysqli_free_result($result);
-mysqli_close($link);
 ?>
 <!DOCTYPE html>
 <html lang="ja">

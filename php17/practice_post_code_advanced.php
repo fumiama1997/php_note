@@ -121,9 +121,8 @@ if (empty($error)) {
         $post_code_data[] = $row;
     }
 
-    //コンテンツの総数を求めて必要なページ数を求める。
+    //件数の総数を求めて、必要なページ数を求める。
     $contents_sum = count($post_code_data);
-
     $max_page = ceil($contents_sum / $max);
     //現在いるページのページ番号を取得
     if (!isset($_GET['page'])) {
@@ -195,10 +194,13 @@ if (empty($error)) {
         </p>
     </form>
     <hr>
-    <?php if (empty($post_code_data) === false) { ?>
-        <table>
-            <p>検索結果<?php print  $contents_sum; ?>件</p>
+
+    下記の部分を＄resultフラグを使用してまとめる。　
+    <!-- <?php if (empty($post_code_data) === false) { ?>
+        <p>検索結果<?php print  $contents_sum; ?>件</p>
             <p>郵便番号検索結果</p>
+        <table>
+            
             <tr>
                 <th>郵便番号</th>
                 <th>都道府県</th>
@@ -208,7 +210,7 @@ if (empty($error)) {
         <?php } ?>
         <?php if (empty($error) && empty($post_code_data) && ((isset($_GET['prefecture']) && isset($_GET['city'])) or isset($_GET['post_code']))) { ?>
             <p>検索結果 0件</p>
-        <?php } ?>
+        <?php } ?> -->
         <?php
         foreach ($view_page as $value) {
         ?>
