@@ -1,26 +1,27 @@
 <?php
 // 西暦
-$regexp_year   = '/^[0-9]{3,4}$/'; // 西暦の正規表現を入力
+$regexp_year   = '/^[1-9][0-9]{3}$/'; // 西暦の正規表現を入力
 $check_year[0] = '1953';
 $check_year[1] = '2013';
 // 電話番号
-$regexp_phone_number   = '/^[0-9]{2,4}-[0-9]{3,4}-[0-9]{3,4}$/'; // 電話番号の正規表現を入力
+$regexp_phone_number   = '/^0[0-9]{1,3}-[0-9]{3,4}-[0-9]{3,4}$/'; // 電話番号の正規表現を入力
 $check_phone_number[0] = '03-1111-1111';
 $check_phone_number[1] = '040-222-2222';
 $check_phone_number[2] = '0120-000-000';
 // formタグ
-$regexp_form   = '/^<form>|<form method="post">$/'; // formの正規表現を入力
+$regexp_form   = '/^<form[a-z-="_ ]*>$/'; // formの正規表現を入力
 $check_form[0] = '<form>';
 $check_form[1] = '<form method="post">';
 // メールアドレス
-// +の意味は直前のパターンの１回以上の繰り返し、下記は１つ以上該当するものがあればOKということ
-$regexp_mail   = '/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9_.+-]+.[a-zA-Z0-9_.+-]+$/'; // メールアドレスの正規表現を入力
+// ドメインには半角英数字と-(半角ハイフン)が使える
+// メールアドレスにはa-z0～9半角 .（ピリオド）-（ハイフン）_（アンダーバー）の3種類が使える。
+$regexp_mail   = '/^[a-z0-9_.-]+@[a-z0-9-]+.[a-z0-9_.-]+$/'; // メールアドレスの正規表現を入力
 $check_mail[0] = 'test@test.com';
 $check_mail[1] = 'test_2@test.co.jp';
 $check_mail[2] = 'test.3@example.ne.jp';
 // URL
-// *は直前のパターンの０回以上の繰り返しの意味
-$regexp_url   = '/^(http|https)+:\/\/([a-zA-Z0-9])+.[a-zA-Z0-9]+[a-zA-Z0-9.\/?%&=]*$/'; // URLの正規表現を入力
+// URLで使用可の文字を半角英数字と「_/:%#$&?()~.=+-」としています。
+$regexp_url   = '/^http[s]?:\/\/([a-z0-9_\/:%#$&?()~=+-])+.[a-z0-9_\/:%#$&?()~.=+-]+[a-z0-9_\/:%#$&?()~.=+-]*$/'; // URLの正規表現を入力
 $check_url[0] = 'http://codecamp.jp';
 $check_url[1] = 'https://test.com';
 $check_url[2] = 'http://codecamp.jp/index.html?q=test';

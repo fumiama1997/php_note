@@ -1,40 +1,33 @@
 <?php
-$job = '';
+// 16章　selectの課題
+// allかそれ以外かで分岐できるように　$jobを有効に使って。要件を追加されてもデータベースの追加だけで済むように。switch文は使わない。
+// deforutでallを入れておけばいい←修正済み
+$job = 'all';
 $emp_data = [];
 $host = 'localhost';
 $username = 'root';
 $passwd   = 'narait';
 $dbname   = 'user';
+$query = '';
 $link = mysqli_connect($host, $username, $passwd, $dbname);
 if ($link) {
     mysqli_set_charset($link, 'utf8');
-}
-if (isset($_POST['job']) === TRUE) {
-    $job = $_POST['job'];
-    switch ($job) {
-        case 'all':
-            $query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
-            break;
-        case 'manager':
-            $query = 'SELECT emp_id,emp_name,job,age FROM emp_table WHERE job = "manager"';
-            break;
-        case 'analyst':
-            $query = 'SELECT emp_id,emp_name,job,age FROM emp_table WHERE job = "analyst"';
-            break;
-        case 'clerk':
-            $query = 'SELECT emp_id,emp_name,job,age FROM emp_table WHERE job = "clerk"';
-            break;
+
+    if (isset($_POST['job'])) {
+        $job = $_POST['job'];
     }
+    if ($job === 'all') {
+        $query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
+    } else {
+        $query = 'SELECT emp_id,emp_name,job,age FROM emp_table WHERE job = "' . $job . '"';
+    }
+    $result = mysqli_query($link, $query);
+    while ($row = mysqli_fetch_array($result)) {
+        $emp_data[] = $row;
+    }
+    mysqli_free_result($result);
+    mysqli_close($link);
 }
-if (empty($_POST)) {
-    $query = 'SELECT emp_id,emp_name,job,age FROM emp_table';
-}
-$result = mysqli_query($link, $query);
-while ($row = mysqli_fetch_array($result)) {
-    $emp_data[] = $row;
-}
-mysqli_free_result($result);
-mysqli_close($link);
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -62,15 +55,9 @@ mysqli_close($link);
     <form method="POST">
         <select name="job">
             <option value="all">全員</option>
-            <option value="manager" <?php if ($job === 'manager') {
-                                        print 'selected';
-                                    } ?>>マネージャー</option>
-            <option value="analyst" <?php if ($job === 'analyst') {
-                                        print 'selected';
-                                    } ?>>アナリスト</option>
-            <option value="clerk" <?php if ($job === 'clerk') {
-                                        print 'selected';
-                                    } ?>>一般職</option>
+            <option value="manager" <?php if ($job === 'manager') {print 'selected';} ?>>マネージャー</option>
+            <option value="analyst" <?php if ($job === 'analyst') {print 'selected';} ?>>アナリスト</option>
+            <option value="clerk" <?php if ($job === 'clerk') {print 'selected';} ?>>一般職</option>
         </select>
         <input type="submit" value="表示">
     </form>
