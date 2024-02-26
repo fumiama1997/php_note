@@ -3,32 +3,32 @@
 1.
 SELECT 
 customer_table.customer_name,
-COUNT(order_table.customer_id) 
+COUNT(order_table.customer_id) AS 発注回数
 FROM 
 customer_table 
 JOIN order_table 
 ON customer_table.customer_id = order_table.customer_id 
 GROUP BY 
-customer_name;
-
+customer_name
+ORDER BY 発注回数 DESC ;
 2.
 SELECT 
 goods_table.goods_name,
-SUM(order_detail_table.quantity) 
+SUM(order_detail_table.quantity) AS 売上本数
 FROM 
 goods_table 
 JOIN order_detail_table 
 ON goods_table.goods_id = order_detail_table.goods_id 
 WHERE goods_table.price = 100 
 GROUP BY 
-goods_name;
-
+goods_name
+ORDER BY 売上本数 DESC
 
 
 
 3.
 SELECT customer_table.customer_name,
-SUM(goods_table.price*order_detail_table.quantity) AS total 
+SUM(goods_table.price*order_detail_table.quantity) AS 合計金額
 FROM 
 goods_table 
 JOIN order_detail_table 

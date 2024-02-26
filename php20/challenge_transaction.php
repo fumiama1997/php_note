@@ -1,4 +1,12 @@
 <?php
+date_default_timezone_set('Asia/Tokyo');
+/**
+ * 必要テーブル
+ *データベース名はtransaction
+ * point_gift_table: ポイントで購入可能な景品
+ * point_customer_table: ユーザーのポイント保有情報
+ * point_history_table:  ポイントでの購入履歴
+ */
 // MySQL接続情報
 $host   = 'localhost'; // データベースのホスト名又はIPアドレス
 $user   = 'root';  // MySQLのユーザ名
@@ -9,17 +17,14 @@ $message     = '';     // 購入処理完了時の表示メッセージ
 $point       = 0;      // 保有ポイント情報
 $err_msg     = [];     // エラーメッセージ
 $point_gift_list = []; // ポイントで購入できる景品
-$point_gift_id = '';
-$message = ''; //購入した商品を入れる変数
+
 // コネクション取得
 if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
-
     // 文字コードセット
     mysqli_set_charset($link, 'UTF8');
 
     // 現在のポイント保有情報を取得するためのSQL
     $sql = 'SELECT point FROM point_customer_table WHERE customer_id = ' . $customer_id;
-    // クエリ実行
     if ($result = mysqli_query($link, $sql)) {
         // １件取得
         $row = mysqli_fetch_assoc($result);
@@ -31,26 +36,25 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         $err_msg[] = 'SQL失敗:' . $sql;
     }
     mysqli_free_result($result);
+
     // POSTの場合はポイントでの景品購入処理
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        //postで飛んできた情報
+
+        // ここに購入時の処理を記載してください
         $point_gift_id = $_POST['point_gift_id'];
-        switch ($point_gift_id) {
-            case 1:
-                $message = '景品[コーラ]を購入しました。';
-                break;
-            case 2:
-                $message = '景品[USB]を購入しました。';
-                break;
-            case 3:
-                $message = '景品[傘]を購入しました。';
-                break;
-            case 4:
-                $message = '景品[お茶]を購入しました。';
-                break;
-            case 5:
-                $message = '景品[サイダー]を購入しました。';
-                break;
+
+        // 選んだ商品のnameを取得するためのSQL
+        $sql = 'SELECT name FROM point_gift_table WHERE point_gift_id = ' . $point_gift_id . '';
+        if ($result = mysqli_query($link, $sql)) {
+            $row = mysqli_fetch_assoc($result);
+            if (isset($row['name']) === TRUE) {
+                $name = $row['name'];
+            }
+        } else {
+            $err_msg[] = 'SQL失敗:' . $sql;
+        }
+        if (isset($point_gift_id)) {
+            $message = '景品 [' . $name . '] を購入しました。';
         }
 
         // 更新系の処理を行う前にトランザクション開始(オートコミットをオフ）
@@ -64,42 +68,33 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         ];
         // point_history_tableへ購入履歴をINSERT
         $point_history_sql = 'INSERT INTO point_history_table(customer_id,point_gift_id,created_at) VALUES(\'' . implode('\',\'', $data) . '\')';
-
-        //クエリの実行が失敗した場合
         if (($result = mysqli_query($link, $point_history_sql)) === false) {
             $err_msg[] = 'SQL失敗:';
         }
 
-        //飛んできた情報を使って商品のポイント額を取得する
+        //商品のポイント額を取得する
         $gift_point_sql = 'SELECT point FROM point_gift_table WHERE point_gift_id = ' . $point_gift_id . '';
-
         if ($result = mysqli_query($link, $gift_point_sql)) {
-            // １件取得
             $row = mysqli_fetch_assoc($result);
-            // 変数に格納
             if (isset($row['point']) === TRUE) {
-                $point = $row['point'];
+                $goods_point = $row['point'];
             }
         } else {
             $err_msg[] = 'SQL失敗:' . $gift_point_sql;
         }
-        //ポイント残数としてブラウザに表示する。
-        $remaining_point_sql = 'SELECT point_customer_table.point - ' . $point . ' AS remaining_Point FROM point_customer_table JOIN point_history_table ON point_customer_table.customer_id = point_history_table.customer_id JOIN point_gift_table ON point_history_table.point_gift_id = point_gift_table.point_gift_id WHERE point_customer_table.customer_id = 1';
-        // クエリ実行
-        if ($result = mysqli_query($link, $remaining_point_sql)) {
-            // １件取得
+        //ポイント残数を取得する
+        $remain_point_sql = 'SELECT ' . $point . '-' . $goods_point . ' AS remain_point FROM point_customer_table JOIN point_history_table ON point_customer_table.customer_id = point_history_table.customer_id JOIN point_gift_table ON point_history_table.point_gift_id = point_gift_table.point_gift_id WHERE point_customer_table.customer_id = ' . $customer_id . '';
+        if ($result = mysqli_query($link, $remain_point_sql)) {
             $row = mysqli_fetch_assoc($result);
-            // 変数に格納
-            if (isset($row['remaining_Point']) === TRUE) {
-                $point = $row['remaining_Point'];
+            if (isset($row['remain_point']) === TRUE) {
+                $point = $row['remain_point'];
             }
         } else {
-            $err_msg[] = 'SQL失敗:' . $remaining_point_sql;
+            $err_msg[] = 'SQL失敗:' . $remain_point_sql;
         }
 
         //ポイント残数をデータベースに反映する。
         $update_point_sql = 'UPDATE point_customer_table SET point = ' . $point . ' WHERE customer_id = ' . $customer_id . '';
-        //クエリの実行
         if ($result = mysqli_query($link, $update_point_sql) === FALSE) {
             $err_msg[] = 'SQL失敗:' .  $update_point_sql;
         };
@@ -141,13 +136,13 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 </head>
 
 <body>
-    <!-- $messageに購入した景品を表示する。 -->
     <?php if (empty($message) !== TRUE) { ?>
+        <!-- 購入した景品をブラウザに表示する。 -->
         <p><?php print $message; ?></p>
     <?php } ?>
     <section>
         <h1>保有ポイント</h1>
-        <!-- 保有ポイントを反映 -->
+        <!-- ポイント残数を表示 -->
         <p><?php print number_format($point); ?>ポイント</p>
     </section>
     <section>
@@ -160,6 +155,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                         <span><?php print number_format($point_gift['point']); ?>ポイント</span>
                         <?php if ($point_gift['point'] <= $point) { ?>
                             <button type="submit" name="point_gift_id" value="<?php print $point_gift['point_gift_id']; ?>">購入する</button>
+                            <!-- ポイント残数よりも、景品のポイントの方が大きければ購入不可になる仕様。 -->
                         <?php        } else { ?>
                             <button type="button" disabled="disabled">購入不可</button>
                         <?php        } ?>
