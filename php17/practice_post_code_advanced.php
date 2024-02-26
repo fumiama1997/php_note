@@ -105,44 +105,43 @@ if ($link) {
         } else if (preg_match($regexp_city, $city, $macths) === 0) {
             $error[] = '市区町村を正しく入力ください';
         }
+    }
+    if (empty($error)) {
 
-        if (empty($error)) {
+        // 1ページに表示する件数を指定
+        $max = 10;
 
-            // 1ページに表示する件数を指定
-            $max = 10;
+        // 必要なデータをすべて取得
+        $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE prefecture = "' . $prefecture . '" AND city = "' . $city .
+            '" OR post_code = "' . $post_code . '"';
+        $result = mysqli_query($link, $query);
 
-            // 必要なデータをすべて取得
-            $query = 'SELECT post_code,prefecture,city,town FROM zip_data_split_3 WHERE prefecture = "' . $prefecture . '" AND city = "' . $city .
-                '" OR post_code = "' . $post_code . '"';
-            $result = mysqli_query($link, $query);
-
-            // データを配列に入れる。
-            while ($row = mysqli_fetch_array($result)) {
-                $post_code_data[] = $row;
-            }
-
-            mysqli_free_result($result);
-
-            $result = true;
-
-            //件数の総数を求めて、必要なページ数を求める。
-            $contents_sum = count($post_code_data);
-            $max_page = ceil($contents_sum / $max);
-            //現在いるページのページ番号を取得
-            if (!isset($_GET['page'])) {
-                $page = 1;
-            } else {
-                $page = $_GET['page'];
-            }
-
-            //スタートするページを取得
-            $start = $max * ($page - 1);
-
-            //取得した全データから必要な分だけ取り出す。
-            $view_page = array_slice($post_code_data, $start, $max, true);
-
-            mysqli_close($link);
+        // データを配列に入れる。
+        while ($row = mysqli_fetch_array($result)) {
+            $post_code_data[] = $row;
         }
+
+        mysqli_free_result($result);
+
+        $result = true;
+
+        //件数の総数を求めて、必要なページ数を求める。
+        $contents_sum = count($post_code_data);
+        $max_page = ceil($contents_sum / $max);
+        //現在いるページのページ番号を取得
+        if (!isset($_GET['page'])) {
+            $page = 1;
+        } else {
+            $page = $_GET['page'];
+        }
+
+        //スタートするページを取得
+        $start = $max * ($page - 1);
+
+        //取得した全データから必要な分だけ取り出す。
+        $view_page = array_slice($post_code_data, $start, $max, true);
+
+        mysqli_close($link);
     }
 }
 ?>
@@ -187,7 +186,9 @@ if ($link) {
                 // 都道府県の配列をループさせる
                 foreach ($areas as $area) {
                 ?>
-                    <option value="<?php print $area; ?>" <?php if ($prefecture === $area) {print 'selected';} ?>><?php print $area; ?></option>
+                    <option value="<?php print $area; ?>" <?php if ($prefecture === $area) {
+                                                                print 'selected';
+                                                            } ?>><?php print $area; ?></option>
                 <?php
                 }
                 ?>

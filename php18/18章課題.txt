@@ -19,7 +19,7 @@ JOIN order_detail_table
 ON order_table.order_id = order_detail_table.order_id 
 JOIN goods_table 
 ON order_detail_table.goods_id = goods_table.goods_id 
-ORDER BY `order_id` ASC
+ORDER BY `order_id` ASC ;
 
 2.
 
@@ -71,4 +71,5 @@ goods_table
 LEFT JOIN order_detail_table 
 ON goods_table.goods_id = order_detail_table.goods_id 
 LEFT JOIN order_table 
-ON order_detail_table.order_id = order_table.order_id;
+ON order_detail_table.order_id = order_table.order_id
+ORDER BY quantity DESC ;
