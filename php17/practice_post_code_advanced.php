@@ -1,6 +1,4 @@
 <?php
-
-
 $areas = [
     '北海道',
     '青森県',
@@ -186,9 +184,7 @@ if ($link) {
                 // 都道府県の配列をループさせる
                 foreach ($areas as $area) {
                 ?>
-                    <option value="<?php print $area; ?>" <?php if ($prefecture === $area) {
-                                                                print 'selected';
-                                                            } ?>><?php print $area; ?></option>
+                    <option value="<?php print $area; ?>" <?php if ($prefecture === $area) {print 'selected';} ?>><?php print $area; ?></option>
                 <?php
                 }
                 ?>

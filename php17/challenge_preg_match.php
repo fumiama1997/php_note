@@ -11,20 +11,20 @@ $check_phone_number[0] = '03-1111-1111';
 $check_phone_number[1] = '040-222-2222';
 $check_phone_number[2] = '0120-000-000';
 // formタグ
-//<form>の文字列は必須条件、a-z-="_ は０回以上の繰り返し(form中身で使用するものだけを調べた)
+//<form>の文字列は必須条件、a-z-="_ は０回以上の繰り返し(form中身で使用するものを調べた)
 $regexp_form   = '/^<form[a-z-="_ ]*>$/'; // formの正規表現を入力
 $check_form[0] = '<form>';
 $check_form[1] = '<form method="post">';
 // メールアドレス
 // ドメインには半角英数字と-(半角ハイフン)が使える
 // メールアドレスにはa-z0～9半角 .（ピリオド）-（ハイフン）_（アンダーバー）の3種類が使える。
-$regexp_mail   = '/^[a-z0-9_.-]+@[a-z0-9-]+.[a-z0-9.-]+$/'; // メールアドレスの正規表現を入力
+$regexp_mail   = '/^[a-z0-9.-_]+@[a-z0-9-]+.[a-z0-9.-]+$/'; // メールアドレスの正規表現を入力
 $check_mail[0] = 'test@test.com';
 $check_mail[1] = 'test_2@test.co.jp';
 $check_mail[2] = 'test.3@example.ne.jp';
 // URL
-// URLで使用可の文字を半角英数字と「_/:%#$&?()~.=+-」としています。
-$regexp_url   = '/^http[s]?:\/\/([a-z0-9_\/:%#$&?()~.=+-])+.[a-z0-9_\/:%#$&?()~.=+-]+[a-z0-9_\/:%#$&?()~.=+-]*$/'; // URLの正規表現を入力
+// URLで使用可の文字を半角英数字と「_/:%#$&?()~.=+-」としている。
+$regexp_url   = '/^http[s]?:\/\/([a-z0-9_\/:%#$&?()~=+-])+.[a-z0-9_\/:%#$&?()~.=+-]+[a-z0-9_\/:%#$&?()~.=+-]*$/'; // URLの正規表現を入力
 $check_url[0] = 'http://codecamp.jp';
 $check_url[1] = 'https://test.com';
 $check_url[2] = 'http://codecamp.jp/index.html?q=test';
