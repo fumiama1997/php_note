@@ -47,17 +47,33 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     // 文字コードセット
     mysqli_set_charset($link, 'UTF8');
 
-    if (isset($_POST['stock']) && isset($_POST['drink_id'])) {
-
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $status = $_POST['status'];
         $stock = $_POST['stock'];
         $drink_id = $_POST['drink_id'];
-        $query = 'UPDATE stock_table set stock = ' . $stock . ' WHERE drink_id = ' . $drink_id . ' ';
-        $result = mysqli_query($link, $query);
 
-        if ($result === true) {
-            $change = '在庫変更成功';
-        } else {
-            $change = '在庫変更失敗';
+        if (isset($_POST['status'])) {
+
+            if ($status === '1') {
+                $status = '0';
+            } else {
+                $status = '1';
+            }
+            $query = 'UPDATE information_table set status = ' . $status . ' WHERE drink_id = ' . $drink_id . ' ';
+            $result = mysqli_query($link, $query);
+            if ($result === true) {
+                $change = 'ステータス変更成功';
+            }
+        }
+
+        if (isset($_POST['stock']) && isset($_POST['drink_id'])) {
+
+
+            $query = 'UPDATE stock_table set stock = ' . $stock . ' WHERE drink_id = ' . $drink_id . ' ';
+            $result = mysqli_query($link, $query);
+            if ($result === true) {
+                $change = '在庫変更成功';
+            }
         }
     }
     $query = 'SELECT information_table.drink_id,information_table.picture,information_table.name,information_table.price,stock_table.stock,information_table.status FROM information_table JOIN stock_table ON information_table.drink_id = stock_table.drink_id ';
@@ -69,6 +85,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     mysqli_free_result($result);
     mysqli_close($link);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -98,7 +115,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 </head>
 
 <body>
-    <p><?php print $change;?></p>
+    <p><?php print $change; ?></p>
     <h1>新規商品追加</h1>
     <form method="post">
         <p>名前: <input type="text" name="name"></p>
@@ -127,16 +144,26 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 
         <?php foreach ($drink_data as $value) { ?>
             <form method="post">
-                <tr>
-
+                <tr <?php if (($value['status']) === '0') {
+                        print 'bgcolor=#cccccc';
+                    } ?>>
                     <td><img src="picture\<?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?>"></td>
                     <td><?php print htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?></td>
                     <td><?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?></td>
+
                     <td><input type="text" size="5" name="stock" value="<?php print $value['stock']; ?>"><br>個<br>
                         <input type="submit" value="変更">
                         <input type="hidden" name="drink_id" value="<?php print $value['drink_id']; ?>">
                     </td>
-                    <td><?php print htmlspecialchars($value['status'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><input type="submit" value="<?php
+                                                    if (($value['status']) === '1') {
+                                                        print '公開→非公開';
+                                                    } else {
+                                                        print '非公開→公開';
+                                                    }; ?>">
+                        <input type="hidden" name="status" value="<?php print $value['status']; ?>">
+                        <input type="hidden" name="drink_id" value="<?php print $value['drink_id']; ?>">
+                    </td>
                 </tr>
             </form>
         <?php }; ?>
