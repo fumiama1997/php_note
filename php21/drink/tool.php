@@ -48,12 +48,9 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     mysqli_set_charset($link, 'UTF8');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $status = $_POST['status'];
-        $stock = $_POST['stock'];
         $drink_id = $_POST['drink_id'];
-
-        if (isset($_POST['status'])) {
-
+        if (isset($_POST['status']) && (isset($_POST['drink_id']))) {
+            $status = $_POST['status'];
             if ($status === '1') {
                 $status = '0';
             } else {
@@ -67,8 +64,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         }
 
         if (isset($_POST['stock']) && isset($_POST['drink_id'])) {
-
-
+            $stock = $_POST['stock'];
             $query = 'UPDATE stock_table set stock = ' . $stock . ' WHERE drink_id = ' . $drink_id . ' ';
             $result = mysqli_query($link, $query);
             if ($result === true) {
@@ -143,18 +139,20 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         </tr>
 
         <?php foreach ($drink_data as $value) { ?>
-            <form method="post">
-                <tr <?php if (($value['status']) === '0') {
-                        print 'bgcolor=#cccccc';
-                    } ?>>
-                    <td><img src="picture\<?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?>"></td>
-                    <td><?php print htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                    <td><?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?></td>
 
+            <tr <?php if (($value['status']) === '0') {
+                    print 'bgcolor=#cccccc';
+                } ?>>
+                <td><img src="picture\<?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?>"></td>
+                <td><?php print htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <form method="post">
                     <td><input type="text" size="5" name="stock" value="<?php print $value['stock']; ?>"><br>個<br>
                         <input type="submit" value="変更">
                         <input type="hidden" name="drink_id" value="<?php print $value['drink_id']; ?>">
                     </td>
+                </form>
+                <form method="post">
                     <td><input type="submit" value="<?php
                                                     if (($value['status']) === '1') {
                                                         print '公開→非公開';
@@ -164,8 +162,9 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                         <input type="hidden" name="status" value="<?php print $value['status']; ?>">
                         <input type="hidden" name="drink_id" value="<?php print $value['drink_id']; ?>">
                     </td>
-                </tr>
-            </form>
+                </form>
+            </tr>
+
         <?php }; ?>
 
     </table>
