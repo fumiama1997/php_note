@@ -33,8 +33,9 @@
 なお、フォームデータを改竄して確認する方法がわからない方は、下記のように公開・非公開以外の選択項目を用意して入力チェックを確認するようにしましょう。
 ユーザがドリンクを購入する「購入ページ」 -->
 <?php
+$change = '';
+var_dump($_POST);
 $goods_data = [];
-
 // MySQL接続情報
 $host   = 'localhost'; // データベースのホスト名又はIPアドレス
 $user   = 'root';  // MySQLのユーザ名
@@ -46,23 +47,28 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     // 文字コードセット
     mysqli_set_charset($link, 'UTF8');
 
-    $query = 'SELECT information_table.picture,information_table.name,information_table.price,stock_table.stock,information_table.status FROM information_table JOIN stock_table ON information_table.drink_id = stock_table.drink_id ';
+    if (isset($_POST['stock']) && isset($_POST['drink_id'])) {
+
+        $stock = $_POST['stock'];
+        $drink_id = $_POST['drink_id'];
+        $query = 'UPDATE stock_table set stock = ' . $stock . ' WHERE drink_id = ' . $drink_id . ' ';
+        $result = mysqli_query($link, $query);
+
+        if ($result === true) {
+            $change = '在庫変更成功';
+        } else {
+            $change = '在庫変更失敗';
+        }
+    }
+    $query = 'SELECT information_table.drink_id,information_table.picture,information_table.name,information_table.price,stock_table.stock,information_table.status FROM information_table JOIN stock_table ON information_table.drink_id = stock_table.drink_id ';
     $result = mysqli_query($link, $query);
     // データを配列に入れる。
     while ($row = mysqli_fetch_array($result)) {
         $drink_data[] = $row;
     }
     mysqli_free_result($result);
+    mysqli_close($link);
 }
-
-
-
-
-
-
-
-
-
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -76,16 +82,23 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         td,
         th {
             border: solid black 1px;
+            text-align: center
         }
 
         table {
             width: 600px;
 
         }
+
+        img {
+            width: 100px;
+            height: 120px;
+        }
     </style>
 </head>
 
 <body>
+    <p><?php print $change;?></p>
     <h1>新規商品追加</h1>
     <form method="post">
         <p>名前: <input type="text" name="name"></p>
@@ -111,15 +124,23 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             <th>在庫数</th>
             <th>ステータス</th>
         </tr>
+
         <?php foreach ($drink_data as $value) { ?>
-            <tr>
-                <td><img src="variety\<?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?>"></td>
-                <td><?php print htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['stock'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['status'], ENT_QUOTES, 'UTF-8'); ?></td>
-            </tr>
+            <form method="post">
+                <tr>
+
+                    <td><img src="picture\<?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?>"></td>
+                    <td><?php print htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    <td><input type="text" size="5" name="stock" value="<?php print $value['stock']; ?>"><br>個<br>
+                        <input type="submit" value="変更">
+                        <input type="hidden" name="drink_id" value="<?php print $value['drink_id']; ?>">
+                    </td>
+                    <td><?php print htmlspecialchars($value['status'], ENT_QUOTES, 'UTF-8'); ?></td>
+                </tr>
+            </form>
         <?php }; ?>
+
     </table>
 </body>
 
