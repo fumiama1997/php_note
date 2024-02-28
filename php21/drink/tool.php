@@ -33,7 +33,27 @@
 なお、フォームデータを改竄して確認する方法がわからない方は、下記のように公開・非公開以外の選択項目を用意して入力チェックを確認するようにしましょう。
 ユーザがドリンクを購入する「購入ページ」 -->
 <?php
-$goods_data = []
+$goods_data = [];
+
+// MySQL接続情報
+$host   = 'localhost'; // データベースのホスト名又はIPアドレス
+$user   = 'root';  // MySQLのユーザ名
+$passwd = 'narait';    // MySQLのパスワード
+$dbname = 'drink';    // データベース名
+
+// コネクション取得
+if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
+    // 文字コードセット
+    mysqli_set_charset($link, 'UTF8');
+
+    $query = 'SELECT information_table.picture,information_table.name,information_table.price,stock_table.stock,information_table.status FROM information_table JOIN stock_table ON information_table.drink_id = stock_table.drink_id ';
+    $result = mysqli_query($link, $query);
+    // データを配列に入れる。
+    while ($row = mysqli_fetch_array($result)) {
+        $drink_data[] = $row;
+    }
+    mysqli_free_result($result);
+}
 
 
 
@@ -42,11 +62,8 @@ $goods_data = []
 
 
 
-; ?>
 
-
-
-
+?>
 <!DOCTYPE html>
 <html lang="ja">
 
@@ -54,6 +71,18 @@ $goods_data = []
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>自動販売機</title>
+    <style type="text/css">
+        table,
+        td,
+        th {
+            border: solid black 1px;
+        }
+
+        table {
+            width: 600px;
+
+        }
+    </style>
 </head>
 
 <body>
@@ -64,8 +93,8 @@ $goods_data = []
         <p>個数: <input type="text" name="name"></p>
         <input type="file" muitiple><br>
         <select name="public">
-            <option value="private">非公開</option>
-            <option value="public">公開</option>
+            <option value=0>非公開</option>
+            <option value=1>公開</option>
         </select><br>
         <input type="submit" value="■□■□■商品追加■□■□■">
     </form>
@@ -82,13 +111,13 @@ $goods_data = []
             <th>在庫数</th>
             <th>ステータス</th>
         </tr>
-        <?php foreach ($goods_data as $value) { ?>
+        <?php foreach ($drink_data as $value) { ?>
             <tr>
-        <td><?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?></td>
-        <td><?php print htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?></td>
-        <td><?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?></td>
-        <td><?php print htmlspecialchars($value['stock'], ENT_QUOTES, 'UTF-8'); ?></td>
-        <td><?php print htmlspecialchars($value['status'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><img src="variety\<?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?>"></td>
+                <td><?php print htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['stock'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <td><?php print htmlspecialchars($value['status'], ENT_QUOTES, 'UTF-8'); ?></td>
             </tr>
         <?php }; ?>
     </table>
