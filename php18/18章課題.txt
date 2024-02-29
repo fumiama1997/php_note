@@ -1,6 +1,6 @@
 18章課題
 
-1.
+1.発注に関して、customer_idとgoods_idを除く全情報を取得
 SELECT 
 order_table.order_id,
 order_table.order_date,
@@ -21,8 +21,7 @@ JOIN goods_table
 ON order_detail_table.goods_id = goods_table.goods_id 
 ORDER BY `order_id` ASC ;
 
-2.
-
+2.佐藤一郎さんの発注した商品情報を取得
 SELECT 
 order_table.order_id,
 order_table.order_date,
@@ -38,12 +37,12 @@ JOIN order_detail_table
 ON order_table.order_id = order_detail_table.order_id 
 JOIN goods_table 
 ON order_detail_table.goods_id = goods_table.goods_id 
-WHERE customer_table.customer_name = "佐藤一郎";
+WHERE customer_table.customer_name = "佐藤一郎"
+ORDER BY `order_id` ASC ;
 
 
 
-
-3.
+3.コーラの売上情報を取得
 SELECT 
 goods_table.goods_name,
 goods_table.price,
@@ -61,7 +60,7 @@ WHERE goods_table.goods_name = "コーラ";
 
 
 
-4.
+4.1回あたりの購入数が多い順に全商品の売上情報を取得
 SELECT goods_table.goods_name,
 goods_table.price,
 order_detail_table.quantity,

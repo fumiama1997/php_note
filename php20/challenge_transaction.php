@@ -41,20 +41,18 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         $sql = 'SELECT name FROM point_gift_table WHERE point_gift_id = ' . $point_gift_id . '';
         if ($result = mysqli_query($link, $sql)) {
             $row = mysqli_fetch_assoc($result);
-            if (isset($row['name']) === TRUE) {
+            if (isset($row['name'])) {
                 $name = $row['name'];
+                $message = '景品 [' . $name . '] を購入しました。';
             }
         } else {
             $err_msg[] = 'SQL失敗:' . $sql;
-        }
-        if (isset($point_gift_id)) {
-            $message = '景品 [' . $name . '] を購入しました。';
         }
         //商品のポイント額を取得する
         $gift_point_sql = 'SELECT point FROM point_gift_table WHERE point_gift_id = ' . $point_gift_id . '';
         if ($result = mysqli_query($link, $gift_point_sql)) {
             $row = mysqli_fetch_assoc($result);
-            if (isset($row['point']) === TRUE) {
+            if (isset($row['point'])) {
                 $goods_point = $row['point'];
             }
         } else {
@@ -64,7 +62,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         $remain_point_sql = 'SELECT ' . $point . '-' . $goods_point . ' AS remain_point FROM point_customer_table JOIN point_history_table ON point_customer_table.customer_id = point_history_table.customer_id JOIN point_gift_table ON point_history_table.point_gift_id = point_gift_table.point_gift_id WHERE point_customer_table.customer_id = ' . $customer_id . '';
         if ($result = mysqli_query($link, $remain_point_sql)) {
             $row = mysqli_fetch_assoc($result);
-            if (isset($row['remain_point']) === TRUE) {
+            if (isset($row['remain_point'])) {
                 $point = $row['remain_point'];
             }
         } else {
