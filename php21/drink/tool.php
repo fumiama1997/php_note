@@ -33,9 +33,13 @@
 なお、フォームデータを改竄して確認する方法がわからない方は、下記のように公開・非公開以外の選択項目を用意して入力チェックを確認するようにしましょう。
 ユーザがドリンクを購入する「購入ページ」 -->
 <?php
+date_default_timezone_set('Asia/Tokyo');
+$regexp_half_size_number =  '/^[0-9]+$/';
+$regexp_file =  '/^[a-z0-9-_]+.(png|jpeg)$/';
 $change = '';
-var_dump($_POST);
+
 $goods_data = [];
+$error = [];
 // MySQL接続情報
 $host   = 'localhost'; // データベースのホスト名又はIPアドレス
 $user   = 'root';  // MySQLのユーザ名
@@ -47,9 +51,80 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     // 文字コードセット
     mysqli_set_charset($link, 'UTF8');
 
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $drink_id = $_POST['drink_id'];
+
+
+        if ((isset($_POST['name'])) && isset(($_POST['price'])) && isset(($_POST['piece'])) && isset(($_POST['file'])) && isset(($_POST['status']))) {
+
+            $name = $_POST['name'];
+            $price = $_POST['price'];
+            $piece = $_POST['piece'];
+            $file = $_POST['file'];
+            $status = $_POST['status'];
+            //バリデーション・正規化
+            if ($name === '') {
+                $error[] = '名前を入力してください';
+            }
+            if ($price === '') {
+                $error[] = '値段を入力してください';
+            } else if (preg_match($regexp_half_size_number, $price, $macths) === 0) {
+                $error[] = '値段は半角数字を入力してください';
+            }
+            if ($piece === '') {
+                $error[] = '個数を入力してください';
+            } else if (preg_match($regexp_half_size_number, $piece, $macths) === 0) {
+                $error[] = '個数は半角数字を入力してください';
+            }
+            if ($file === '') {
+                $error[] = 'ファイルを選択してください';
+            } else if (preg_match($regexp_file, $file, $macths) === 0) {
+                $error[] = 'ファイル形式が異なります。画像ファイルはJPEG又はPNGのみ利用可能です';
+            }
+
+            if (empty($error)) {
+                mysqli_autocommit($link, false);
+                // information_tableへの情報追加
+                $date = date('y:m:d H:i:s');
+                $query = 'INSERT INTO information_table(name,price,create_date,update_date,status,picture) VALUES("' . $name . '",' . $price . ',"' . $date . '","' . $date . '","' . $status . '","' . $file . '")';
+                $result = mysqli_query($link, $query);
+                if ($result === true) {
+                } else {
+                    $error[] = 'SQL失敗:' . $sql;
+                }
+
+                // 追加した新規商品のdrink_idを取得
+                $query = 'SELECT drink_id FROM information_table ORDER BY drink_id DESC LIMIT 1 ';
+                if ($result = mysqli_query($link, $query)) {
+                    // １件取得
+                    $row = mysqli_fetch_assoc($result);
+                    // 変数に格納
+                    if (isset($row['drink_id']) === TRUE) {
+                        $drink_id = $row['drink_id'];
+                    }
+                }
+                // stock_tableへの情報追加
+                $query = 'INSERT INTO stock_table(drink_id,stock,create_date,update_date) VALUES(' . $drink_id . ',' . $piece . ',"' . $date . '","' . $date . '")';
+                $result = mysqli_query($link, $query);
+                if ($result === true) {
+                } else {
+                    $error[] = 'SQL失敗:' . $sql;
+                }
+
+                // トランザクション成否判定
+                if (count($error) === 0) {
+                    // 処理確定
+                    mysqli_commit($link);
+                    $change = '新規商品追加成功';
+                } else {
+                    // 処理取消
+                    mysqli_rollback($link);
+                }
+            }
+        }
+        
         if (isset($_POST['status']) && (isset($_POST['drink_id']))) {
+            $drink_id = $_POST['drink_id'];
             $status = $_POST['status'];
             if ($status === '1') {
                 $status = '0';
@@ -65,13 +140,23 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 
         if (isset($_POST['stock']) && isset($_POST['drink_id'])) {
             $stock = $_POST['stock'];
-            $query = 'UPDATE stock_table set stock = ' . $stock . ' WHERE drink_id = ' . $drink_id . ' ';
-            $result = mysqli_query($link, $query);
-            if ($result === true) {
-                $change = '在庫変更成功';
+            $drink_id = $_POST['drink_id'];
+            //バリデーション・正規化
+            if ($stock === '') {
+                $error[] = '個数を入力してください';
+            } else if (preg_match($regexp_half_size_number, $stock, $macths) === 0) {
+                $error[] = '個数は半角数字を入力してください';
+            }
+            if (empty($error)) {
+                $query = 'UPDATE stock_table set stock = ' . $stock . ' WHERE drink_id = ' . $drink_id . ' ';
+                $result = mysqli_query($link, $query);
+                if ($result === true) {
+                    $change = '在庫変更成功';
+                }
             }
         }
     }
+
     $query = 'SELECT information_table.drink_id,information_table.picture,information_table.name,information_table.price,stock_table.stock,information_table.status FROM information_table JOIN stock_table ON information_table.drink_id = stock_table.drink_id ';
     $result = mysqli_query($link, $query);
     // データを配列に入れる。
@@ -111,14 +196,17 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 </head>
 
 <body>
+    <?php foreach ($error as $value) { ?>
+        <p><?php print $value; ?></p>
+    <?php } ?>
     <p><?php print $change; ?></p>
     <h1>新規商品追加</h1>
     <form method="post">
         <p>名前: <input type="text" name="name"></p>
-        <p>値段: <input type="text" name="name"></p>
-        <p>個数: <input type="text" name="name"></p>
-        <input type="file" muitiple><br>
-        <select name="public">
+        <p>値段: <input type="text" name="price"></p>
+        <p>個数: <input type="text" name="piece"></p>
+        <input type="file" name="file" muitiple><br>
+        <select name="status">
             <option value=0>非公開</option>
             <option value=1>公開</option>
         </select><br>
