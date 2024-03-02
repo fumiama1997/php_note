@@ -1,6 +1,20 @@
 18章課題
+正規化した以下の4つのテーブルに対し、適切な外部キー設定をしてください。
+外部キー設定
+order_table.customer_id
+order_detail_table.goods_id
+
+外部キーの設定が完了したら、レコード削除などにより外部キーによる制約を確認し
+customer_tableのレコードを削除にて以下のエラーを確認
+#1451 - Cannot delete or update a parent row: a foreign key constraint fails (`user`.`order_table`, CONSTRAINT `order_table_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customer_table` (`customer_id`))
+goods_tableのレコード削除でも同様のエラーを確認済み
+
 
 1.発注に関して、customer_idとgoods_idを除く全情報を取得
+※20章の課題の影響でorder_detail_tableとorder_tableのレコードが増えている。
+※課題と見比べてorder_id 3　のコーラとお茶の順番が逆になってしまう。
+これはどのように修正すればよいか。
+
 SELECT 
 order_table.order_id,
 order_table.order_date,
@@ -61,6 +75,8 @@ WHERE goods_table.goods_name = "コーラ";
 
 
 4.1回あたりの購入数が多い順に全商品の売上情報を取得
+※goods_nameのお茶とコーラ、サイダーとコーラの順番が逆になってしまう。
+これはどのように修正すればよいか。
 SELECT goods_table.goods_name,
 goods_table.price,
 order_detail_table.quantity,

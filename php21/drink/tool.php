@@ -62,6 +62,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             $piece = $_POST['piece'];
             $file = $_POST['file'];
             $status = $_POST['status'];
+            
             //バリデーション・正規化
             if ($name === '') {
                 $error[] = '名前を入力してください';

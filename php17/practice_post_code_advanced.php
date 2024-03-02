@@ -184,7 +184,9 @@ if ($link) {
                 // 都道府県の配列をループさせる
                 foreach ($areas as $area) {
                 ?>
-                    <option value="<?php print $area; ?>" <?php if ($prefecture === $area) {print 'selected';} ?>><?php print $area; ?></option>
+                    <option value="<?php print $area; ?>" <?php if ($prefecture === $area) {
+                                                                print 'selected';
+                                                            } ?>><?php print $area; ?></option>
                 <?php
                 }
                 ?>
@@ -194,7 +196,7 @@ if ($link) {
         </p>
     </form>
     <hr>
-    <!-- //クエリの実行が可能であったことが条件($_GETの値がissetされておりかつempty($error)であるということでもある) -->
+    <!-- //クエリの実行が可能であったことが$result === true　の条件($_GETの値がissetされておりかつempty($error)であるということでもある) -->
     <?php if ($result === true) { ?>
         <p>検索結果<?php print  $contents_sum; ?>件</p>
         <?php if ($contents_sum >= 1) { ?>

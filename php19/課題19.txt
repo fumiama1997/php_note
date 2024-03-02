@@ -45,7 +45,8 @@ JOIN order_table
 ON order_detail_table.order_id = order_table.order_id 
 JOIN customer_table 
 ON order_table.customer_id = customer_table.customer_id 
-GROUP BY customer_name;
+GROUP BY customer_name
+ORDER BY `customer_table`.`customer_id` ASC;
 
 
 
