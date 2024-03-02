@@ -1,6 +1,6 @@
 課題19
 
-1.
+1.顧客毎の発注回数を取得し、名前と合わせて表示してください。
 SELECT 
 customer_table.customer_name,
 COUNT(order_table.customer_id) AS 発注回数
@@ -11,10 +11,13 @@ ON customer_table.customer_id = order_table.customer_id
 GROUP BY 
 customer_name
 ORDER BY 発注回数 DESC ;
-2.
+
+
+
+2.値段が100円の商品に関して商品毎の売上数量を取得し、商品名と合わせて表示してください。
 SELECT 
 goods_table.goods_name,
-SUM(order_detail_table.quantity) AS 売上本数
+SUM(order_detail_table.quantity) AS 売上数量
 FROM 
 goods_table 
 JOIN order_detail_table 
@@ -22,11 +25,16 @@ ON goods_table.goods_id = order_detail_table.goods_id
 WHERE goods_table.price = 100 
 GROUP BY 
 goods_name
-ORDER BY 売上本数 DESC
+ORDER BY 売上数量 DESC;
 
 
 
-3.
+
+3.名前の順番が異なる。
+※customer_idを昇順で指定すれば、順番通りにできると思い
+ORDER BY `customer_id` ASC　を　下記に追加するも
+#1052 - 列 'customer_id' は order clause 内で曖昧です。とエラーが出る。
+
 SELECT customer_table.customer_name,
 SUM(goods_table.price*order_detail_table.quantity) AS 合計金額
 FROM 
@@ -37,8 +45,7 @@ JOIN order_table
 ON order_detail_table.order_id = order_table.order_id 
 JOIN customer_table 
 ON order_table.customer_id = customer_table.customer_id 
-GROUP BY 
-customer_name;
+GROUP BY customer_name;
 
 
 
