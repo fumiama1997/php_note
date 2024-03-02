@@ -1,25 +1,41 @@
 2/24(土)
 
-16章　selectの課題
+16-9章　php16/challenge_mysql_select.php
 $jobの中身がallかそれ以外かで分岐できるように修正。
 
-17‐4　正規表現　
+17‐4　php17/challenge_preg_match.php
+正規表現　
 formの正規表現の修正
 メールアドレス ドメインに使える記号の確認
 URL　URLに使える記号の確認
 
-17-5
+17-5　php17/practice_preg_match_intermediate.php
 何故かパスワードaaaaでも登録できるようになっているので、正しくできるように確認する。
 → メタ文字が\(バックスラッシュ)がないことでエスケープ処理ができていなかった。メタ文字の前に\を入れて通常の文字として認識させるようにした。
 挙動も確認しaaaaの入力では登録完了せず、aaaaaaや$$$$$$六文字では登録完了ができることを確認。
 
-php17-6/practice_post_code_advanced.php
+php17-6　php17/practice_post_code_advanced.php
+挙動はすでに先生と確認ができている。
 →resultフラグを使用してまとめたので確認してもらう。
 
-20-6 php20/challenge_transaction.php
-仕様としては意図した動作を行うことができている。コードの流れも説明できる。
+18-11
+1.
+※課題と見比べてorder_id 3　のコーラとお茶のレコードの順番が逆になってしまう。
+これはどのように修正すればよいか。
 
-20章まで修正完了
+4．
+※goods_nameのお茶とコーラ、サイダーとコーラのレコードの順番が逆になってしまう。
+これはどのように修正すればよいか。
+
+19章
+3.鈴木さん、山田さんのレコードが逆になってしまう。
+※customer_idを昇順で指定すれば、順番通りにできると思い
+ORDER BY `customer_id` ASC　を　追加するも
+#1052 - 列 'customer_id' は order clause 内で曖昧です。とエラーが出る。
+
+
+20-6 php20/challenge_transaction.php
+仕様としては意図した動作を行うことができている。コードが冗長な部分がないか確認していただきたい。
 
 
 現状作業中の内容　
