@@ -35,65 +35,64 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // ここに購入時の処理を記載してください
-        $point_gift_id = $_POST['point_gift_id'];
+        if (isset($_POST['point_gift_id'])) {
+            $point_gift_id = $_POST['point_gift_id'];
 
-        // 選んだ商品のnameを取得するためのSQL
-        $sql = 'SELECT name FROM point_gift_table WHERE point_gift_id = ' . $point_gift_id . '';
-        if ($result = mysqli_query($link, $sql)) {
-            $row = mysqli_fetch_assoc($result);
-            if (isset($row['name'])) {
-                $name = $row['name'];
-                $message = '景品 [' . $name . '] を購入しました。';
+            if ($point_gift_id === '') {
+                $err_msg[] = 'point_gift_idが入力されていません';
+            } else if (is_numeric($point_gift_id) === false) {
+                $err_msg[] = 'point_gift_idの値が不正です';
             }
-        } else {
-            $err_msg[] = 'SQL失敗:' . $sql;
-        }
-        //商品のポイント額を取得する
-        $gift_point_sql = 'SELECT point FROM point_gift_table WHERE point_gift_id = ' . $point_gift_id . '';
-        if ($result = mysqli_query($link, $gift_point_sql)) {
-            $row = mysqli_fetch_assoc($result);
-            if (isset($row['point'])) {
-                $goods_point = $row['point'];
+
+            if (empty($err_msg)) {
+                // 選んだ商品のnameと商品のポイント数を取得するためのSQL
+                $sql = 'SELECT name,point FROM point_gift_table WHERE point_gift_id = ' . $point_gift_id . '';
+                if (($result = mysqli_query($link, $sql)) !== false) {
+                    $row = mysqli_fetch_assoc($result);
+                    if (isset($row)) {
+                        $name = $row['name'];
+                        $goods_point = $row['point'];
+                        //ポイント残数を取得する
+                        $point =  $point - $goods_point;
+                    }
+                } else {
+                    $err_msg[] = 'SQL失敗:';
+                }
             }
-        } else {
-            $err_msg[] = 'SQL失敗:' . $gift_point_sql;
-        }
-        //ポイント残数を取得する
-        $remain_point_sql = 'SELECT ' . $point . '-' . $goods_point . ' AS remain_point FROM point_customer_table JOIN point_history_table ON point_customer_table.customer_id = point_history_table.customer_id JOIN point_gift_table ON point_history_table.point_gift_id = point_gift_table.point_gift_id WHERE point_customer_table.customer_id = ' . $customer_id . '';
-        if ($result = mysqli_query($link, $remain_point_sql)) {
-            $row = mysqli_fetch_assoc($result);
-            if (isset($row['remain_point'])) {
-                $point = $row['remain_point'];
+            // 上記のクエリ実行が成功していれば
+            if (empty($err_msg)) {
+                // 更新系の処理を行う前にトランザクション開始(オートコミットをオフ）
+                mysqli_autocommit($link, false);
+                // 現在時刻を取得
+                $date = date('Y-m-d H:i:s');
+                $data = [
+                    'customer_id' => $customer_id,
+                    'point_gift_id' => $point_gift_id,
+                    'created_at' => $date
+                ];
+                // point_history_tableへ購入履歴をINSERT
+                $point_history_sql = 'INSERT INTO point_history_table(customer_id,point_gift_id,created_at) VALUES(\'' . implode('\',\'', $data) . '\')';
+                if (($result = mysqli_query($link, $point_history_sql)) === false) {
+                    $err_msg[] = 'SQL失敗:';
+                }
             }
-        } else {
-            $err_msg[] = 'SQL失敗:' . $remain_point_sql;
-        }
-        // 更新系の処理を行う前にトランザクション開始(オートコミットをオフ）
-        mysqli_autocommit($link, false);
-        // 現在時刻を取得
-        $date = date('Y-m-d H:i:s');
-        $data = [
-            'customer_id' => $customer_id,
-            'point_gift_id' => $point_gift_id,
-            'created_at' => $date
-        ];
-        // point_history_tableへ購入履歴をINSERT
-        $point_history_sql = 'INSERT INTO point_history_table(customer_id,point_gift_id,created_at) VALUES(\'' . implode('\',\'', $data) . '\')';
-        if (($result = mysqli_query($link, $point_history_sql)) === false) {
-            $err_msg[] = 'SQL失敗:';
-        }
-        //ポイント残数をデータベースに反映する。
-        $update_point_sql = 'UPDATE point_customer_table SET point = ' . $point . ' WHERE customer_id = ' . $customer_id . '';
-        if ($result = mysqli_query($link, $update_point_sql) === FALSE) {
-            $err_msg[] = 'SQL失敗:' .  $update_point_sql;
-        };
-        // トランザクション成否判定
-        if (count($err_msg) === 0) {
-            // 処理確定
-            mysqli_commit($link);
-        } else {
-            // 処理取消
-            mysqli_rollback($link);
+            // 上記のクエリ実行が成功していれば
+            if (empty($err_msg)) {
+                //ポイント残数をデータベースに反映する。
+                $update_point_sql = 'UPDATE point_customer_table SET point = ' . $point . ' WHERE customer_id = ' . $customer_id . '';
+                if ($result = mysqli_query($link, $update_point_sql) === FALSE) {
+                    $err_msg[] = 'SQL失敗:' .  $update_point_sql;
+                };
+                // トランザクション成否判定
+                if (count($err_msg) === 0) {
+                    // 処理確定
+                    mysqli_commit($link);
+                    $message = '景品 [' . $name . '] を購入しました。';
+                } else {
+                    // 処理取消
+                    mysqli_rollback($link);
+                }
+            }
         }
     }
     // SQL

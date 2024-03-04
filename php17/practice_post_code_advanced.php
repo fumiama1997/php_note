@@ -208,20 +208,21 @@ if ($link) {
                     <th>市区町村</th>
                     <th>町域</th>
                 </tr>
+                <?php
+                foreach ($view_page as $value) {
+                ?>
+                    <tr>
+                        <td><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
+                    </tr>
+                <?php  } ?>
             <?php } ?>
         <?php } else { ?>
             <p>ここに検索結果が表示されます</p>
         <?php } ?>
-        <?php
-        foreach ($view_page as $value) {
-        ?>
-            <tr>
-                <td><?php print htmlspecialchars($value['post_code'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['prefecture'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['city'], ENT_QUOTES, 'UTF-8'); ?></td>
-                <td><?php print htmlspecialchars($value['town'], ENT_QUOTES, 'UTF-8'); ?></td>
-            </tr>
-        <?php  } ?>
+
             </table>
             <?php if ($page > 1) { ?>
                 <a href="practice_post_code_advanced.php?prefecture=<?php print $prefecture; ?>&city=<?php print $city; ?>&page=<?php print($page - 1); ?>">前のページ</a>

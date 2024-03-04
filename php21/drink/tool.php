@@ -54,7 +54,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-
+        var_dump($_POST);
         if ((isset($_POST['name'])) && isset(($_POST['price'])) && isset(($_POST['piece'])) && isset(($_POST['file'])) && isset(($_POST['status']))) {
 
             $name = $_POST['name'];
@@ -62,7 +62,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             $piece = $_POST['piece'];
             $file = $_POST['file'];
             $status = $_POST['status'];
-            
+            var_dump($status);
             //バリデーション・正規化
             if ($name === '') {
                 $error[] = '名前を入力してください';
@@ -82,60 +82,73 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             } else if (preg_match($regexp_file, $file, $macths) === 0) {
                 $error[] = 'ファイル形式が異なります。画像ファイルはJPEG又はPNGのみ利用可能です';
             }
+            if (($status === '0' or '1') === false) {
+                $error[] = '公開ステータスの値が不正です';
+            } 
 
             if (empty($error)) {
                 mysqli_autocommit($link, false);
                 // information_tableへの情報追加
                 $date = date('y:m:d H:i:s');
                 $query = 'INSERT INTO information_table(name,price,create_date,update_date,status,picture) VALUES("' . $name . '",' . $price . ',"' . $date . '","' . $date . '","' . $status . '","' . $file . '")';
-                $result = mysqli_query($link, $query);
-                if ($result === true) {
-                } else {
+                if (($result = mysqli_query($link, $query)) === false) {
                     $error[] = 'SQL失敗:' . $sql;
                 }
 
-                // 追加した新規商品のdrink_idを取得
-                $query = 'SELECT drink_id FROM information_table ORDER BY drink_id DESC LIMIT 1 ';
-                if ($result = mysqli_query($link, $query)) {
-                    // １件取得
-                    $row = mysqli_fetch_assoc($result);
-                    // 変数に格納
-                    if (isset($row['drink_id']) === TRUE) {
-                        $drink_id = $row['drink_id'];
+                if (empty($error)) {
+                    // 追加した新規商品のdrink_idを取得
+                    $query = 'SELECT drink_id FROM information_table ORDER BY drink_id DESC LIMIT 1 ';
+                    if ($result = mysqli_query($link, $query)) {
+                        // １件取得
+                        $row = mysqli_fetch_assoc($result);
+                        // 変数に格納
+                        if (isset($row['drink_id']) === TRUE) {
+                            $drink_id = $row['drink_id'];
+                        }
+                    } else {
+                        $error[] = 'SQL失敗:' . $sql;
                     }
                 }
-                // stock_tableへの情報追加
-                $query = 'INSERT INTO stock_table(drink_id,stock,create_date,update_date) VALUES(' . $drink_id . ',' . $piece . ',"' . $date . '","' . $date . '")';
-                $result = mysqli_query($link, $query);
-                if ($result === true) {
-                } else {
-                    $error[] = 'SQL失敗:' . $sql;
-                }
-
-                // トランザクション成否判定
-                if (count($error) === 0) {
-                    // 処理確定
-                    mysqli_commit($link);
-                    $change = '新規商品追加成功';
-                } else {
-                    // 処理取消
-                    mysqli_rollback($link);
+                if (empty($error)) {
+                    // stock_tableへの情報追加
+                    $query = 'INSERT INTO stock_table(drink_id,stock,create_date,update_date) VALUES(' . $drink_id . ',' . $piece . ',"' . $date . '","' . $date . '")';
+                    $result = mysqli_query($link, $query);
+                    if ($result === true) {
+                    } else {
+                        $error[] = 'SQL失敗:' . $sql;
+                    }
+                    // トランザクション成否判定
+                    if (count($error) === 0) {
+                        // 処理確定
+                        mysqli_commit($link);
+                        $change = '新規商品追加成功';
+                    } else {
+                        // 処理取消
+                        mysqli_rollback($link);
+                    }
                 }
             }
         }
-        
+
         if (isset($_POST['status']) && (isset($_POST['drink_id']))) {
             $drink_id = $_POST['drink_id'];
             $status = $_POST['status'];
+            if (is_numeric($drink_id) === false) {
+                $error[] = 'idの値が不正です';
+            }
             if ($status === '1') {
                 $status = '0';
-            } else {
+            } elseif ($status === '0') {
                 $status = '1';
+            } else {
+                $error[] = 'ステータスの値が不正です';
             }
-            $query = 'UPDATE information_table set status = ' . $status . ' WHERE drink_id = ' . $drink_id . ' ';
-            $result = mysqli_query($link, $query);
-            if ($result === true) {
-                $change = 'ステータス変更成功';
+            if (empty($error)) {
+                $query = 'UPDATE information_table set status = ' . $status . ' WHERE drink_id = ' . $drink_id . ' ';
+                $result = mysqli_query($link, $query);
+                if ($result === true) {
+                    $change = 'ステータス変更成功';
+                }
             }
         }
 
@@ -143,6 +156,9 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             $stock = $_POST['stock'];
             $drink_id = $_POST['drink_id'];
             //バリデーション・正規化
+            if (is_numeric($drink_id) === false) {
+                $error[] = 'idの値が不正です';
+            }
             if ($stock === '') {
                 $error[] = '個数を入力してください';
             } else if (preg_match($regexp_half_size_number, $stock, $macths) === 0) {
@@ -208,8 +224,8 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         <p>個数: <input type="text" name="piece"></p>
         <input type="file" name="file" muitiple><br>
         <select name="status">
-            <option value=0>非公開</option>
-            <option value=1>公開</option>
+            <option value= "0">非公開</option>
+            <option value= "1">公開</option>
         </select><br>
         <input type="submit" value="■□■□■商品追加■□■□■">
     </form>
