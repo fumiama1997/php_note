@@ -175,7 +175,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         }
     }
 
-    $query = 'SELECT information_table.drink_id,information_table.picture,information_table.name,information_table.price,stock_table.stock,information_table.status FROM information_table JOIN stock_table ON information_table.drink_id = stock_table.drink_id ';
+    $query = 'SELECT it.drink_id,it.picture,it.name,it.price,st.stock,it.status FROM information_table AS it JOIN stock_table AS st ON it.drink_id = st.drink_id ';
     $result = mysqli_query($link, $query);
     // データを配列に入れる。
     while ($row = mysqli_fetch_array($result)) {

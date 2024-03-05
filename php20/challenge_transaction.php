@@ -6,6 +6,7 @@ $host   = 'localhost'; // データベースのホスト名又はIPアドレス
 $user   = 'root';  // MySQLのユーザ名
 $passwd = 'narait';    // MySQLのパスワード
 $dbname = 'transaction';    // データベース名
+
 $customer_id = 1;      // 顧客は1に固定
 $message     = '';     // 購入処理完了時の表示メッセージ
 $point       = 0;      // 保有ポイント情報
