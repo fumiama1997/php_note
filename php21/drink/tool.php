@@ -31,13 +31,13 @@
 フォームデータの改竄は教科書の「Chrome便利機能」の「1-2 一時的な修正」で紹介しています。
 
 なお、フォームデータを改竄して確認する方法がわからない方は、下記のように公開・非公開以外の選択項目を用意して入力チェックを確認するようにしましょう。
-ユーザがドリンクを購入する「購入ページ」 -->
+-->
 <?php
 date_default_timezone_set('Asia/Tokyo');
 $regexp_half_size_number =  '/^[0-9]+$/';
 $regexp_file =  '/^[a-z0-9-_]+.(png|jpeg)$/';
 $change = '';
-
+$drink_data = [];
 $goods_data = [];
 $error = [];
 // MySQL接続情報
@@ -54,7 +54,6 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        var_dump($_POST);
         if ((isset($_POST['name'])) && isset(($_POST['price'])) && isset(($_POST['piece'])) && isset(($_POST['file'])) && isset(($_POST['status']))) {
 
             $name = $_POST['name'];
@@ -62,7 +61,6 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             $piece = $_POST['piece'];
             $file = $_POST['file'];
             $status = $_POST['status'];
-            var_dump($status);
             //バリデーション・正規化
             if ($name === '') {
                 $error[] = '名前を入力してください';
@@ -82,9 +80,9 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             } else if (preg_match($regexp_file, $file, $macths) === 0) {
                 $error[] = 'ファイル形式が異なります。画像ファイルはJPEG又はPNGのみ利用可能です';
             }
-            if (($status === '0' or '1') === false) {
+            if ((($status === '0') || ($status === '1')) === false) {
                 $error[] = '公開ステータスの値が不正です';
-            } 
+            }
 
             if (empty($error)) {
                 mysqli_autocommit($link, false);
@@ -113,8 +111,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                     // stock_tableへの情報追加
                     $query = 'INSERT INTO stock_table(drink_id,stock,create_date,update_date) VALUES(' . $drink_id . ',' . $piece . ',"' . $date . '","' . $date . '")';
                     $result = mysqli_query($link, $query);
-                    if ($result === true) {
-                    } else {
+                    if (($result = mysqli_query($link, $query)) === false) {
                         $error[] = 'SQL失敗:' . $sql;
                     }
                     // トランザクション成否判定
@@ -133,6 +130,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         if (isset($_POST['status']) && (isset($_POST['drink_id']))) {
             $drink_id = $_POST['drink_id'];
             $status = $_POST['status'];
+
             if (is_numeric($drink_id) === false) {
                 $error[] = 'idの値が不正です';
             }
@@ -155,6 +153,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         if (isset($_POST['stock']) && isset($_POST['drink_id'])) {
             $stock = $_POST['stock'];
             $drink_id = $_POST['drink_id'];
+
             //バリデーション・正規化
             if (is_numeric($drink_id) === false) {
                 $error[] = 'idの値が不正です';
@@ -169,6 +168,8 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 $result = mysqli_query($link, $query);
                 if ($result === true) {
                     $change = '在庫変更成功';
+                } else {
+                    $error[] = '在庫変更失敗';
                 }
             }
         }
@@ -224,8 +225,9 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         <p>個数: <input type="text" name="piece"></p>
         <input type="file" name="file" muitiple><br>
         <select name="status">
-            <option value= "0">非公開</option>
-            <option value= "1">公開</option>
+            <option value="0">非公開</option>
+            <option value="1">公開</option>
+            <option value="2">入力チェック用</option>
         </select><br>
         <input type="submit" value="■□■□■商品追加■□■□■">
     </form>
