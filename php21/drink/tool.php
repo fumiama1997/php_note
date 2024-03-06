@@ -41,14 +41,14 @@ $drink_data = [];
 $goods_data = [];
 $error = [];
 // MySQL接続情報
-$host   = 'localhost'; // データベースのホスト名又はIPアドレス
-$user   = 'root';  // MySQLのユーザ名
-$passwd = 'narait';    // MySQLのパスワード
-$dbname = 'drink';    // データベース名
+$host   = 'localhost';
+$user   = 'root';
+$passwd = 'narait';
+$dbname = 'drink';
 
-// コネクション取得
+
 if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
-    // 文字コードセット
+
     mysqli_set_charset($link, 'UTF8');
 
 
@@ -110,7 +110,6 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 if (empty($error)) {
                     // stock_tableへの情報追加
                     $query = 'INSERT INTO stock_table(drink_id,stock,create_date,update_date) VALUES(' . $drink_id . ',' . $piece . ',"' . $date . '","' . $date . '")';
-                    $result = mysqli_query($link, $query);
                     if (($result = mysqli_query($link, $query)) === false) {
                         $error[] = 'SQL失敗:' . $sql;
                     }
@@ -127,6 +126,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             }
         }
 
+        //ステータス変更時
         if (isset($_POST['status']) && (isset($_POST['drink_id']))) {
             $drink_id = $_POST['drink_id'];
             $status = $_POST['status'];
@@ -150,11 +150,11 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             }
         }
 
+        //在庫変更時
         if (isset($_POST['stock']) && isset($_POST['drink_id'])) {
             $stock = $_POST['stock'];
             $drink_id = $_POST['drink_id'];
 
-            //バリデーション・正規化
             if (is_numeric($drink_id) === false) {
                 $error[] = 'idの値が不正です';
             }
