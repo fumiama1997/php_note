@@ -22,7 +22,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     // 文字コードセット
     mysqli_set_charset($link, 'UTF8');
 
-    $query =  'SELECT it.picture,it.name,it.price,st.stock From information_table AS it JOIN stock_table AS st ON it.drink_id = st.drink_id';
+    $query =  'SELECT it.drink_id,it.picture,it.name,it.price,st.stock From information_table AS it JOIN stock_table AS st ON it.drink_id = st.drink_id';
     $result = mysqli_query($link, $query);
 
     // データを配列に入れる。
@@ -39,14 +39,20 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>購入フォーム</title>
     <style>
         div {
             text-align: center;
         }
 
         .row {
+            width: 500px;
             display: flex;
+            flex-wrap: wrap;
+        }
+
+        .child {
+            width: calc(100%/4);
         }
 
         img {
@@ -66,11 +72,11 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 
 <body>
     <h1>自動販売機</h1>
-    <form method="post">
-        <p>金額 <input type="text" name="price"></p>
+    <form method="post" action="./result.php">
+        <p>金額 <input type="text" name="money"></p>
         <div class="row">
             <?php foreach ($goods_data as $value) {  ?>
-                <div>
+                <div class="child">
                     <div>
                         <img src="picture\<?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?>">
                     </div>
@@ -79,6 +85,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                     </div>
                     <div>
                         <?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?>
+
                     </div>
 
                     <?php if (($value['stock']) === '0') {  ?>
@@ -87,14 +94,13 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                         </div>
                     <?php } else { ?>
                         <div>
-                            <input type="radio" name="select_goods">
+                            <input type="radio" name="information" value="<?php print $value['drink_id']; ?> <?php print $value['price']; ?>">
                         </div>
                     <?php } ?>
                 </div>
             <?php } ?>
         </div>
-
-
+        <input type="submit" value="■□■□■購入■□■□■">
     </form>
 
 

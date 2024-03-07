@@ -110,6 +110,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     } else {
         $err_msg[] = 'SQL失敗:' . $sql;
     }
+
     mysqli_free_result($result);
     mysqli_close($link);
 } else {
