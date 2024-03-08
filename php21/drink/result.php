@@ -31,7 +31,6 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             $information = explode(" ", $_POST['information']);
             $drink_id = $information[0];
             $price = $information[1];
-            $stock = $information[2];
 
             if ($drink_id === '') {
                 $error[] = 'drink_idが入力されていません';
@@ -43,12 +42,6 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 $error[] = '商品の価格が空です';
             } else if ((is_numeric($price)) === false) {
                 $error[] = '商品の価格が不正です';
-            }
-
-            if ($stock === '') {
-                $error[] = '在庫が記載されていません';
-            } else if ((intval($stock)) < 0) {
-                $error[] = '売り切れです。';
             }
         }
         if (isset($_POST['money'])) {
@@ -65,8 +58,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 
         // 結果表示ページに必要な情報を取得する
         if (empty($error)) {
-
-            $query = 'SELECT picture,name,price FROM information_table WHERE drink_id = ' . $drink_id . '';
+            $query = 'SELECT it.picture,it.name,it.price,st.stock FROM information_table AS it JOIN stock_table AS st ON  it.drink_id = st.drink_id WHERE it.drink_id = ' . $drink_id . '';
             if (($result = mysqli_query($link, $query)) !== false) {
                 $row = mysqli_fetch_assoc($result);
                 mysqli_free_result($result);
@@ -74,6 +66,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                     $picture = $row['picture'];
                     $name = $row['name'];
                     $price = $row['price'];
+                    $stock = $row['stock'];
                     $money = $money - $price;
                 }
             } else {
@@ -82,11 +75,15 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         }
 
         //選択した商品の在庫を減らす
-        if (empty($error)) {
+        if ((empty($error))||(intval($stock) > 0 )) {
             $query = 'UPDATE stock_table SET stock = stock - 1 WHERE drink_id = ' . $drink_id . ' ';
             if (($result = mysqli_query($link, $query)) !== true) {
                 $err_msg[] = 'SQL失敗:' .   $query;
             }
+        }else if(isset($error)){
+            $error[] = 'SQL失敗:';
+        }else if((intval($stock) === 0)){
+            $error[] = '売り切れました';
         }
 
         mysqli_close($link);
@@ -112,7 +109,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 <body>
     <h1>自動販売機結果</h1>
 
-    <?php if (empty($error)) { ?>
+    <?php if ((empty($error))||(intval($stock) > 0 )) { ?>
         <img src="picture\<?php print htmlspecialchars($picture, ENT_QUOTES, 'UTF-8'); ?>">
         <p>がしゃん！[<?php print $name; ?>]が買えました！</p>
         <p>おつりは[<?php print $money; ?>円]です</p>

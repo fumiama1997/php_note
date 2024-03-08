@@ -96,7 +96,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                             </div>
                         <?php } else { ?>
                             <div>
-                                <input type="radio" name="information" value="<?php print $value['drink_id']; ?> <?php print $value['price']; ?> <?php print $value['stock']; ?>">
+                                <input type="radio" name="information" value="<?php print $value['drink_id']; ?> <?php print $value['price']; ?>">
                             </div>
                         <?php } ?>
                     </div>
