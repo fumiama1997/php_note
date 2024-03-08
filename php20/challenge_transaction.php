@@ -1,6 +1,14 @@
+<!-- 20章の修正を確認してもらう。
+修正箇所
+動作は先生と確認済み。
+・商品ポイントと商品の名前を取得するクエリを別々に作っていたので一つにまとめた。
+・point_gift_idに対するバリデーションの作成。
+・商品購入後のポイントを$point =  $point - $goods_point;に修正
+ (前回クエリ実行で複雑にしていた)
+・クエリ実行ごとにエラーチェックを行う。(empty($err_msg))
+・処理確定後に  $message = '景品 [' . $name . '] を購入しました。';を入力 -->
 <?php
 date_default_timezone_set('Asia/Tokyo');
-
 // MySQL接続情報
 $host   = 'localhost'; // データベースのホスト名又はIPアドレス
 $user   = 'root';  // MySQLのユーザ名
@@ -74,7 +82,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 // point_history_tableへ購入履歴をINSERT
                 $point_history_sql = 'INSERT INTO point_history_table(customer_id,point_gift_id,created_at) VALUES(\'' . implode('\',\'', $data) . '\')';
                 if (($result = mysqli_query($link, $point_history_sql)) === false) {
-                    $err_msg[] = 'SQL失敗:'.$point_history_sql;
+                    $err_msg[] = 'SQL失敗:' . $point_history_sql;
                 }
             }
             // 上記のクエリ実行が成功していれば

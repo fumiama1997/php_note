@@ -22,7 +22,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     // 文字コードセット
     mysqli_set_charset($link, 'UTF8');
 
-    $query =  'SELECT it.drink_id,it.picture,it.name,it.price,st.stock From information_table AS it JOIN stock_table AS st ON it.drink_id = st.drink_id';
+    $query =  'SELECT it.drink_id,it.picture,it.name,it.price,it.status,st.stock From information_table AS it JOIN stock_table AS st ON it.drink_id = st.drink_id';
     $result = mysqli_query($link, $query);
 
     // データを配列に入れる。
@@ -76,35 +76,35 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         <p>金額 <input type="text" name="money"></p>
         <div class="row">
             <?php foreach ($goods_data as $value) {  ?>
-                <div class="child">
-                    <div>
-                        <img src="picture\<?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?>">
-                    </div>
-                    <div>
-                        <?php print htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?>
-                    </div>
-                    <div>
-                        <?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?>
+                <?php if ($value['status'] === '1') { ?>
+                    <div class="child">
 
-                    </div>
+                        <div>
+                            <img src="picture\<?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+                        <div>
+                            <?php print htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?>
+                        </div>
+                        <div>
+                            <?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?>
 
-                    <?php if (($value['stock']) === '0') {  ?>
-                        <div>
-                            <p class="red">売り切れ</p>
                         </div>
-                    <?php } else { ?>
-                        <div>
-                            <input type="radio" name="information" value="<?php print $value['drink_id']; ?> <?php print $value['price']; ?>">
-                        </div>
-                    <?php } ?>
-                </div>
+
+                        <?php if (($value['stock']) === '0') {  ?>
+                            <div>
+                                <p class="red">売り切れ</p>
+                            </div>
+                        <?php } else { ?>
+                            <div>
+                                <input type="radio" name="information" value="<?php print $value['drink_id']; ?> <?php print $value['price']; ?> <?php print $value['stock']; ?>">
+                            </div>
+                        <?php } ?>
+                    </div>
+                <?php } ?>
             <?php } ?>
         </div>
         <input type="submit" value="■□■□■購入■□■□■">
     </form>
-    <!-- これ使ったらいいんちゃう？ -->
-    <!-- <button type="submit" name="point_gift_id" value="<?php print $point_gift['point_gift_id']; ?>">購入する</button> -->
-
 
 </body>
 

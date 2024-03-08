@@ -25,14 +25,13 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
     mysqli_set_charset($link, 'UTF8');
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-      
-
         if ((isset($_POST['information'])) === false) {
             $error[] = '商品を選択してください';
         } else if (isset($_POST['information'])) {
             $information = explode(" ", $_POST['information']);
             $drink_id = $information[0];
             $price = $information[1];
+            $stock = $information[2];
 
             if ($drink_id === '') {
                 $error[] = 'drink_idが入力されていません';
@@ -44,6 +43,12 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 $error[] = '商品の価格が空です';
             } else if ((is_numeric($price)) === false) {
                 $error[] = '商品の価格が不正です';
+            }
+
+            if ($stock === '') {
+                $error[] = '在庫が記載されていません';
+            } else if ((intval($stock)) < 0) {
+                $error[] = '売り切れです。';
             }
         }
         if (isset($_POST['money'])) {
