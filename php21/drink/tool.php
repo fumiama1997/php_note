@@ -57,9 +57,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 $query = 'INSERT INTO information_table(name,price,create_date,update_date,status,picture) VALUES("' . $name . '",' . $price . ',"' . $date . '","' . $date . '","' . $status . '","' . $file . '")';
                 if (($result = mysqli_query($link, $query)) === false) {
                     $error[] = 'SQL失敗:' . $sql;
-                }
-
-                if (empty($error)) {
+                } else {
                     // 新しく追加した商品のdrink_idを取得
                     $query = 'SELECT drink_id FROM information_table ORDER BY drink_id DESC LIMIT 1 ';
                     if ($result = mysqli_query($link, $query)) {
@@ -212,7 +210,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             <tr <?php if (($value['status']) === '0') {
                     print 'bgcolor=#cccccc';
                 } ?>>
-                <td><img src="picture\<?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?>"></td>
+                <td><img src="picture/<?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?>"></td>
                 <td><?php print htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <!-- 在庫数変更部分 -->
