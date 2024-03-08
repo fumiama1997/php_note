@@ -19,6 +19,7 @@ $passwd = 'narait';
 $dbname = 'drink';
 $name = '';
 $money = 0;
+$stock = '';
 var_dump($_POST);
 if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 

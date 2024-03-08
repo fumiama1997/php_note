@@ -1,5 +1,4 @@
 <?php
-var_dump($_POST);
 date_default_timezone_set('Asia/Tokyo');
 $regexp_half_size_number =  '/^[0-9]+$/';
 $regexp_file =  '/^[a-z0-9-_]+.(png|jpeg)$/';
