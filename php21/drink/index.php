@@ -102,7 +102,8 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         </div>
         <input type="submit" value="■□■□■購入■□■□■">
     </form>
-
+    <!-- これ使ったらいいんちゃう？ -->
+    <!-- <button type="submit" name="point_gift_id" value="<?php print $point_gift['point_gift_id']; ?>">購入する</button> -->
 
 
 </body>

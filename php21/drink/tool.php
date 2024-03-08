@@ -1,38 +1,5 @@
-<!-- 販売するドリンクの追加・変更を行う「管理ページ」
-以下の要件を満たすように作成してください。
-[管理ページ]（ファイルパス: htdocs/drink/tool.php）
-
-1．「ドリンク名」「値段」「在庫数」「公開ステータス」を入力し、商品を追加できる。
-
-2．商品を追加する場合、「商品画像」を指定してアップロードできる。
-
-3．追加した商品の一覧情報として、「商品画像」、「商品名」、「値段」、「在庫数」、「公開ステータス」のデータを一覧で表示する。
-
-4．商品一覧から指定ドリンクの在庫数を入力し、在庫数の変更ができる。
-
-5．商品一覧から指定ドリンクの公開ステータス「公開」あるいは「非公開」の変更ができる。
-
-6．商品の追加あるいは指定ドリンク情報（「在庫数」、「公開ステータス」）の変更が正常に完了した場合、完了のメッセージを表示する。
-
-7．商品を追加する場合、「商品名」「値段」、「在庫数」、「公開ステータス」「商品画像」のいずれかを指定していない場合、エラーメッセージを表示して、商品を追加できない。
-
-8．商品を追加する場合、「値段」、「在庫数」は、0以上の整数のみ可能とする。0以上の整数以外はエラーメッセージを表示して、商品を追加できない。
-
-9．商品を追加する場合、公開ステータスは「公開」あるいは「非公開」のみ可能とする。「公開」あるいは「非公開」以外はエラーメッセージを表示して、商品を追加できない。
-
-10．アップロードできる「商品画像」のファイル形式は「JPEG」、「PNG」のみ可能とする。「JPEG」、「PNG」以外はエラーメッセージを表示して、商品を追加できない。
-
-11．商品一覧から指定ドリンクの在庫数を変更する場合、0以上の整数のみ可能とする。0以上の整数以外はエラーメッセージを表示して、変更できない。
-
-補足 管理ページ要件9 入力チェックの確認方法
-
-要件9のプルダウンの入力チェックは一見不要そうに見えますが、フォームデータは容易に改竄できてしまうため、しっかりとチェックするようにしましょう。
-
-フォームデータの改竄は教科書の「Chrome便利機能」の「1-2 一時的な修正」で紹介しています。
-
-なお、フォームデータを改竄して確認する方法がわからない方は、下記のように公開・非公開以外の選択項目を用意して入力チェックを確認するようにしましょう。
--->
 <?php
+var_dump($_POST);
 date_default_timezone_set('Asia/Tokyo');
 $regexp_half_size_number =  '/^[0-9]+$/';
 $regexp_file =  '/^[a-z0-9-_]+.(png|jpeg)$/';
@@ -53,7 +20,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+        // 新規商品追加時に通るバリデーション
         if ((isset($_POST['name'])) && isset(($_POST['price'])) && isset(($_POST['piece'])) && isset(($_POST['file'])) && isset(($_POST['status']))) {
 
             $name = $_POST['name'];
@@ -94,7 +61,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 }
 
                 if (empty($error)) {
-                    // 追加した新規商品のdrink_idを取得
+                    // 新しく追加した商品のdrink_idを取得
                     $query = 'SELECT drink_id FROM information_table ORDER BY drink_id DESC LIMIT 1 ';
                     if ($result = mysqli_query($link, $query)) {
                         // １件取得
@@ -107,8 +74,8 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                         $error[] = 'SQL失敗:' . $sql;
                     }
                 }
+                // stock_tableへの情報追加
                 if (empty($error)) {
-                    // stock_tableへの情報追加
                     $query = 'INSERT INTO stock_table(drink_id,stock,create_date,update_date) VALUES(' . $drink_id . ',' . $piece . ',"' . $date . '","' . $date . '")';
                     if (($result = mysqli_query($link, $query)) === false) {
                         $error[] = 'SQL失敗:' . $sql;
@@ -125,51 +92,47 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 }
             }
         }
-
-        //ステータス変更時
-        if (isset($_POST['status']) && (isset($_POST['drink_id']))) {
+        // 在庫又はステータスの変更時に共通部分である$_POST['drink_id']をバリデーション。
+        if (isset($_POST['drink_id'])) {
             $drink_id = $_POST['drink_id'];
-            $status = $_POST['status'];
-
             if (is_numeric($drink_id) === false) {
                 $error[] = 'idの値が不正です';
             }
-            if ($status === '1') {
-                $status = '0';
-            } elseif ($status === '0') {
-                $status = '1';
-            } else {
-                $error[] = 'ステータスの値が不正です';
-            }
-            if (empty($error)) {
-                $query = 'UPDATE information_table set status = ' . $status . ' WHERE drink_id = ' . $drink_id . ' ';
-                $result = mysqli_query($link, $query);
-                if ($result === true) {
-                    $change = 'ステータス変更成功';
+
+            //ステータス変更時
+            if (isset($_POST['status'])) {
+                $status = $_POST['status'];
+                if ($status === '1') {
+                    $status = '0';
+                } elseif ($status === '0') {
+                    $status = '1';
+                } else {
+                    $error[] = 'ステータスの値が不正です';
+                }
+                if (empty($error)) {
+                    $query = 'UPDATE information_table set status = ' . $status . ' WHERE drink_id = ' . $drink_id . ' ';
+                    $result = mysqli_query($link, $query);
+                    if ($result === true) {
+                        $change = 'ステータス変更成功';
+                    }
                 }
             }
-        }
-
-        //在庫変更時
-        if (isset($_POST['stock']) && isset($_POST['drink_id'])) {
-            $stock = $_POST['stock'];
-            $drink_id = $_POST['drink_id'];
-
-            if (is_numeric($drink_id) === false) {
-                $error[] = 'idの値が不正です';
-            }
-            if ($stock === '') {
-                $error[] = '個数を入力してください';
-            } else if (preg_match($regexp_half_size_number, $stock, $macths) === 0) {
-                $error[] = '個数は半角数字を入力してください';
-            }
-            if (empty($error)) {
-                $query = 'UPDATE stock_table set stock = ' . $stock . ' WHERE drink_id = ' . $drink_id . ' ';
-                $result = mysqli_query($link, $query);
-                if ($result === true) {
-                    $change = '在庫変更成功';
-                } else {
-                    $error[] = '在庫変更失敗';
+            //在庫変更時
+            if (isset($_POST['stock'])) {
+                $stock = $_POST['stock'];
+                if ($stock === '') {
+                    $error[] = '個数を入力してください';
+                } else if (preg_match($regexp_half_size_number, $stock, $macths) === 0) {
+                    $error[] = '個数は半角数字を入力してください';
+                }
+                if (empty($error)) {
+                    $query = 'UPDATE stock_table set stock = ' . $stock . ' WHERE drink_id = ' . $drink_id . ' ';
+                    $result = mysqli_query($link, $query);
+                    if ($result === true) {
+                        $change = '在庫変更成功';
+                    } else {
+                        $error[] = '在庫変更失敗';
+                    }
                 }
             }
         }
@@ -253,12 +216,14 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 <td><img src="picture\<?php print htmlspecialchars($value['picture'], ENT_QUOTES, 'UTF-8'); ?>"></td>
                 <td><?php print htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8'); ?></td>
                 <td><?php print htmlspecialchars($value['price'], ENT_QUOTES, 'UTF-8'); ?></td>
+                <!-- 在庫数変更部分 -->
                 <form method="post">
                     <td><input type="text" size="5" name="stock" value="<?php print $value['stock']; ?>"><br>個<br>
                         <input type="submit" value="変更">
                         <input type="hidden" name="drink_id" value="<?php print $value['drink_id']; ?>">
                     </td>
                 </form>
+                <!-- ステータス変更部分 -->
                 <form method="post">
                     <td><input type="submit" value="<?php
                                                     if (($value['status']) === '1') {

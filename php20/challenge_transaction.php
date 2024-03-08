@@ -74,7 +74,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 // point_history_tableへ購入履歴をINSERT
                 $point_history_sql = 'INSERT INTO point_history_table(customer_id,point_gift_id,created_at) VALUES(\'' . implode('\',\'', $data) . '\')';
                 if (($result = mysqli_query($link, $point_history_sql)) === false) {
-                    $err_msg[] = 'SQL失敗:';
+                    $err_msg[] = 'SQL失敗:'.$point_history_sql;
                 }
             }
             // 上記のクエリ実行が成功していれば
