@@ -59,8 +59,10 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 
         // 結果表示ページに必要な情報を取得する
         if (empty($error)) {
-            $query = 'SELECT it.picture,it.name,it.price,st.stock FROM information_table AS it JOIN stock_table AS st ON  it.drink_id = st.drink_id WHERE it.drink_id = ' . $drink_id . '';
-            if (($result = mysqli_query($link, $query)) !== false) {
+            $query = 'SELECT it.status,it.picture,it.name,it.price,st.stock FROM information_table AS it JOIN stock_table AS st ON  it.drink_id = st.drink_id WHERE it.drink_id = ' . $drink_id . '';
+            if (($result = mysqli_query($link, $query)) === false) {
+                $error[] = 'SQL失敗:';
+            } else {
                 $row = mysqli_fetch_assoc($result);
                 mysqli_free_result($result);
                 if (isset($row)) {
@@ -68,26 +70,23 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                     $name = $row['name'];
                     $price = $row['price'];
                     $stock = $row['stock'];
+                    $status = $row['status'];
                     $money = $money - $price;
+
+                    if ((intval($stock) === 0)) {
+                        $error[] = '在庫がありません';
+                    } else if ($status === '0') {
+                        $error[] = 'ステータスが非公開の為購入できません';
+                    } else {
+                        $query = 'UPDATE stock_table SET stock = stock - 1 WHERE drink_id = ' . $drink_id . ' ';
+                        if (($result = mysqli_query($link, $query)) === false) {
+                            $error[] = 'SQL失敗:';
+                            mysqli_close($link);
+                        }
+                    }
                 }
-            } else {
-                $error[] = 'SQL失敗:';
             }
         }
-
-        //選択した商品の在庫を減らす
-        if ((empty($error))||(intval($stock) > 0 )) {
-            $query = 'UPDATE stock_table SET stock = stock - 1 WHERE drink_id = ' . $drink_id . ' ';
-            if (($result = mysqli_query($link, $query)) !== true) {
-                $err_msg[] = 'SQL失敗:' .   $query;
-            }
-        }else if(isset($error)){
-            $error[] = 'SQL失敗:';
-        }else if((intval($stock) === 0)){
-            $error[] = '売り切れました';
-        }
-
-        mysqli_close($link);
     }
 }
 
@@ -110,7 +109,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 <body>
     <h1>自動販売機結果</h1>
 
-    <?php if ((empty($error))||(intval($stock) > 0 )) { ?>
+    <?php if ((empty($error))) { ?>
         <img src="picture\<?php print htmlspecialchars($picture, ENT_QUOTES, 'UTF-8'); ?>">
         <p>がしゃん！[<?php print $name; ?>]が買えました！</p>
         <p>おつりは[<?php print $money; ?>円]です</p>
