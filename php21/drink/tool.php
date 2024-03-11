@@ -12,7 +12,6 @@ $user   = 'root';
 $passwd = 'narait';
 $dbname = 'drink';
 
-
 if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 
     mysqli_set_charset($link, 'UTF8');
@@ -20,7 +19,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // 新規商品追加時に通るバリデーション
-        if ((isset($_POST['name'])) && isset(($_POST['price'])) && isset(($_POST['piece'])) && isset(($_POST['file'])) && isset(($_POST['status']))) {
+        if (isset($_POST['insert'])) {
 
             $name = $_POST['name'];
             $price = $_POST['price'];
@@ -59,20 +58,8 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                     $error[] = 'SQL失敗:' . $sql;
                 } else {
                     // 新しく追加した商品のdrink_idを取得
-                    $query = 'SELECT drink_id FROM information_table ORDER BY drink_id DESC LIMIT 1 ';
-                    if ($result = mysqli_query($link, $query)) {
-                        // １件取得
-                        $row = mysqli_fetch_assoc($result);
-                        // 変数に格納
-                        if (isset($row['drink_id']) === TRUE) {
-                            $drink_id = $row['drink_id'];
-                        }
-                    } else {
-                        $error[] = 'SQL失敗:' . $sql;
-                    }
-                }
-                // stock_tableへの情報追加
-                if (empty($error)) {
+                    $drink_id = mysqli_insert_id($link);
+                    // stock_tableへの情報追加
                     $query = 'INSERT INTO stock_table(drink_id,stock,create_date,update_date) VALUES(' . $drink_id . ',' . $piece . ',"' . $date . '","' . $date . '")';
                     if (($result = mysqli_query($link, $query)) === false) {
                         $error[] = 'SQL失敗:' . $sql;
@@ -89,61 +76,85 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 }
             }
         }
-        // 在庫又はステータスの変更時に共通部分である$_POST['drink_id']をバリデーション。
-        if (isset($_POST['drink_id'])) {
+
+        //在庫数変更部分
+        if (isset($_POST['stock_change'])) {
             $drink_id = $_POST['drink_id'];
+            $stock = $_POST['stock'];
             if (is_numeric($drink_id) === false) {
                 $error[] = 'idの値が不正です';
             }
-
-            //ステータス変更時
-            if (isset($_POST['status'])) {
-                $status = $_POST['status'];
-                if ($status === '1') {
-                    $status = '0';
-                } elseif ($status === '0') {
-                    $status = '1';
+            if ($stock === '') {
+                $error[] = '個数を入力してください';
+            } else if (preg_match($regexp_half_size_number, $stock, $macths) === 0) {
+                $error[] = '個数は半角数字を入力してください';
+            }
+            if (empty($error)) {
+                mysqli_autocommit($link, false);
+                $query = 'UPDATE stock_table set stock = ' . $stock . ' WHERE drink_id = ' . $drink_id . ' ';
+                if (($result = mysqli_query($link, $query)) === false) {
+                    $error[] = '在庫変更失敗';
                 } else {
-                    $error[] = 'ステータスの値が不正です';
-                }
-                if (empty($error)) {
-                    $query = 'UPDATE information_table set status = ' . $status . ' WHERE drink_id = ' . $drink_id . ' ';
-                    $result = mysqli_query($link, $query);
-                    if ($result === true) {
-                        $change = 'ステータス変更成功';
+                    $date = date('y:m:d H:i:s');
+                    $query = 'UPDATE stock_table set update_date = "' . $date . '" WHERE drink_id = ' . $drink_id . ' ';
+                    if (($result = mysqli_query($link, $query)) === false) {
+                        $error[] = '更新日付変更失敗';
+                    } else if (count($error) === 0) {
+                        // 処理確定
+                        mysqli_commit($link);
+                        $change = '在庫変更成功';
+                    } else {
+                        // 処理取消
+                        mysqli_rollback($link);
                     }
                 }
             }
-            //在庫変更時
-            if (isset($_POST['stock'])) {
-                $stock = $_POST['stock'];
-                if ($stock === '') {
-                    $error[] = '個数を入力してください';
-                } else if (preg_match($regexp_half_size_number, $stock, $macths) === 0) {
-                    $error[] = '個数は半角数字を入力してください';
-                }
-                if (empty($error)) {
-                    $query = 'UPDATE stock_table set stock = ' . $stock . ' WHERE drink_id = ' . $drink_id . ' ';
-                    $result = mysqli_query($link, $query);
-                    if ($result === true) {
-                        $change = '在庫変更成功';
+        }
+
+
+
+        //ステータス変更時
+        if (isset($_POST['status_change'])) {
+            $drink_id = $_POST['drink_id'];
+            $status = $_POST['status'];
+            if (is_numeric($drink_id) === false) {
+                $error[] = 'idの値が不正です';
+            }
+            if ((($status === '0') || ($status === '1')) === false) {
+                $error[] = '公開ステータスの値が不正です';
+            }
+            if (empty($error)) {
+                mysqli_autocommit($link, false);
+                $query = 'UPDATE information_table set status = ' . $status . ' WHERE drink_id = ' . $drink_id . ' ';
+                if (($result = mysqli_query($link, $query)) === false) {
+                    $error[] = 'ステータス変更失敗';
+                } else {
+                    $date = date('y:m:d H:i:s');
+                    $query = 'UPDATE information_table set update_date = "' . $date . '" WHERE drink_id = ' . $drink_id . ' ';
+                    if (($result = mysqli_query($link, $query)) === false) {
+                        $error[] = '更新日付変更失敗';
+                    } else if (count($error) === 0) {
+                        // 処理確定
+                        mysqli_commit($link);
+                        $change = 'ステータス変更成功';
                     } else {
-                        $error[] = '在庫変更失敗';
+                        // 処理取消
+                        mysqli_rollback($link);
                     }
                 }
             }
         }
     }
-
-    $query = 'SELECT it.drink_id,it.picture,it.name,it.price,st.stock,it.status FROM information_table AS it JOIN stock_table AS st ON it.drink_id = st.drink_id ';
-    $result = mysqli_query($link, $query);
-    // データを配列に入れる。
-    while ($row = mysqli_fetch_array($result)) {
-        $drink_data[] = $row;
-    }
-    mysqli_free_result($result);
-    mysqli_close($link);
 }
+
+$query = 'SELECT it.drink_id,it.picture,it.name,it.price,st.stock,it.status FROM information_table AS it JOIN stock_table AS st ON it.drink_id = st.drink_id ';
+$result = mysqli_query($link, $query);
+// データを配列に入れる。
+while ($row = mysqli_fetch_array($result)) {
+    $drink_data[] = $row;
+}
+mysqli_free_result($result);
+mysqli_close($link);
 
 ?>
 <!DOCTYPE html>
@@ -189,7 +200,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
             <option value="1">公開</option>
             <option value="2">入力チェック用</option>
         </select><br>
-        <input type="submit" value="■□■□■商品追加■□■□■">
+        <input type="submit" value="■□■□■商品追加■□■□■" name="insert">
     </form>
     <hr>
     <h2>商品情報変更</h2>
@@ -216,20 +227,22 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                 <!-- 在庫数変更部分 -->
                 <form method="post">
                     <td><input type="text" size="5" name="stock" value="<?php print $value['stock']; ?>"><br>個<br>
-                        <input type="submit" value="変更">
+                        <input type="submit" value="変更" name="stock_change">
                         <input type="hidden" name="drink_id" value="<?php print $value['drink_id']; ?>">
                     </td>
                 </form>
                 <!-- ステータス変更部分 -->
                 <form method="post">
-                    <td><input type="submit" value="<?php
-                                                    if (($value['status']) === '1') {
-                                                        print '公開→非公開';
-                                                    } else {
-                                                        print '非公開→公開';
-                                                    }; ?>">
-                        <input type="hidden" name="status" value="<?php print $value['status']; ?>">
-                        <input type="hidden" name="drink_id" value="<?php print $value['drink_id']; ?>">
+                    <?php if ($value['status'] === '1') { ?>
+                        <td><input type="submit" value="公開→非公開" name="status_change"></td>
+                        <?php $value['status'] = '0'; ?>
+                    <?php } else if ($value['status'] === '0') { ?>
+                        <td><input type="submit" value="非公開→公開" name="status_change"></td>
+                        <?php $value['status'] = '1'; ?>
+                    <?php } ?>
+
+                    <input type="hidden" name="status" value="<?php print $value['status']; ?>">
+                    <input type="hidden" name="drink_id" value="<?php print $value['drink_id']; ?>">
                     </td>
                 </form>
             </tr>
