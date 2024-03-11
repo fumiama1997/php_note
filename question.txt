@@ -16,3 +16,6 @@ tool.php 要件確認済み
 
 index.phpとresult.phpも実装済み
 ※result.phpｍｐ要件9は任意の為に非実施。
+
+今後やること
+21章各phpの確認　きれいにできる部分があれば修正　質問の列挙
