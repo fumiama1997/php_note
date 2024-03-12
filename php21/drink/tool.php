@@ -63,9 +63,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
                     $query = 'INSERT INTO stock_table(drink_id,stock,create_date,update_date) VALUES(' . $drink_id . ',' . $piece . ',"' . $date . '","' . $date . '")';
                     if (($result = mysqli_query($link, $query)) === false) {
                         $error[] = 'SQL失敗:' . $sql;
-                    }
-                    // トランザクション成否判定
-                    if (count($error) === 0) {
+                    } else if (count($error) === 0) {
                         // 処理確定
                         mysqli_commit($link);
                         $change = '新規商品追加成功';

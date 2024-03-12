@@ -20,7 +20,7 @@ $dbname = 'drink';
 $name = '';
 $money = 0;
 $stock = '';
-var_dump($_POST);
+
 if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
 
     mysqli_set_charset($link, 'UTF8');
@@ -29,6 +29,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         if ((isset($_POST['information'])) === false) {
             $error[] = '商品を選択してください';
         } else if (isset($_POST['information'])) {
+            // 二つのValue値を分ける処理
             $information = explode(" ", $_POST['information']);
             $drink_id = $information[0];
             $price = $information[1];
@@ -89,14 +90,7 @@ if ($link = mysqli_connect($host, $user, $passwd, $dbname)) {
         }
     }
 }
-
-
-
 ?>
-
-
-
-
 <!DOCTYPE html>
 <html lang="ja">
 
