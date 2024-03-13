@@ -72,15 +72,6 @@ if (is_readable($filename) === TRUE) {
         print $element . '<br>';
     } ?>
 
-
-
-
-
-
-
-
-
-
 </body>
 
 </html>

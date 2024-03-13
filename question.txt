@@ -1,4 +1,4 @@
-3/21(木) 13:30 質問・確認内容 　次回の目標は22章を確実にして　23.24章に入っている状態にする。
+3/21(木) 13:30 質問・確認内容 　
 
 21章 自動販売機 
 tool.php 要件確認済み
@@ -14,8 +14,13 @@ tool.php 要件確認済み
 上記修正後に新規追加、在庫変更、ステータス変更問題なく動作可能であることを確認。
 
 
-index.phpとresult.phpも実装済み
-※result.phpｍｐ要件9は任意の為に非実施。
+index.phpとresult.php要件確認。
+※result.php要件9は任意の為に非実施。
 
-今後やること
-21章各phpの確認　きれいにできる部分があれば修正　質問の列挙
+21章質問　index.phpについて
+index.phpからresult.phpへpostする際に、
+ <input type="radio" name="information" value="<?php print $value['drink_id']; ?> <?php print $value['price']; ?>">
+ として2つの情報を同時に送り、result.php側で二つのValue値を分ける処理をしている。
+ 冗長とならないコードをどのように書けばよいか。    
+ 
+                       
