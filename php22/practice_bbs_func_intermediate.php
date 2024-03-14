@@ -158,6 +158,7 @@ function entity_assoc_array($assoc_array)
         foreach ($value as $keys => $values) {
             // 特殊文字をHTMLエンティティに変換
             $assoc_array[$key][$keys] = entity_str($values);
+            var_dump($assoc_array[$key][$keys]);
         }
     }
 
