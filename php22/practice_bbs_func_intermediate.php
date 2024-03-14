@@ -68,7 +68,6 @@ if (get_request_method() === 'POST') {
         $error[] = 'ひとこと入力してください';
     }
     if (empty($error)) {
-        var_dump($_POST);
         insert_table($name, $comment, $link);
     }
 }
@@ -168,27 +167,27 @@ function close_db_connect($link)
 function check_name($name)
 {
     if (mb_strlen($name) > 20) {
-        return $name = false;
+        return false;
     } else {
-        return $name = true;
+        return true;
     }
 }
 
 function check_comment($comment)
 {
     if (mb_strlen($comment) > 100) {
-        return $comment = false;
+        return false;
     } else {
-        return $comment = true;
+        return true;
     }
 }
 
 function check_empty($str)
 {
     if ($str === '') {
-        return $str = true;
+        return  true;
     } else {
-        return $str = false;
+        return  false;
     }
 }
 ?>
