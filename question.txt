@@ -24,7 +24,25 @@ index.phpからresult.phpへpostする際に、
  冗長とならないコードをどのように書けばよいか。    
  
 
+22-8 DBハンドルとは何か
+
+この部分の$assoc_array[$key][$keys]が何をやっているのかが分からない　調べる。
+function entity_assoc_array($assoc_array)
+{
+
+    foreach ($assoc_array as $key => $value) {
+
+        foreach ($value as $keys => $values) {
+            // 特殊文字をHTMLエンティティに変換
+            $assoc_array[$key][$keys] = entity_str($values);
+            var_dump($assoc_array[$key][$keys]);
+        }
+    }
+    return $assoc_array;
+}
+
+
 
  進捗状況
- 22-10　中級課題　途中　テーブルの一覧を取得途中。
+ 23章序盤
                        
